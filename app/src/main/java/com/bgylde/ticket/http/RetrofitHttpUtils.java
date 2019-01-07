@@ -13,6 +13,7 @@ import java.io.StringReader;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Callback;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -39,6 +40,38 @@ public class RetrofitHttpUtils {
     private static final String BASE_URL = "https://kyfw.12306.cn";
 
     private static IRetrofitService service = null;
+
+    public static boolean sendByGet(Context context, String url, Map<String, Object> headers, retrofit2.Callback<ResponseBody> callback) {
+        IRetrofitService service = getRetrofitService(context);
+        Call<ResponseBody> repoCall = null;
+        if (headers == null || headers.size() <= 0) {
+            repoCall = service.sendByGet(url);
+        } else {
+            repoCall = service.sendByGet(url, headers);
+        }
+
+        retrofit2.Response<ResponseBody> response = null;
+        try {
+            response = repoCall.execute();
+            int code = response.code();
+            if (code >= 200 && code < 400) {
+                callback.onResponse(repoCall, response);
+                return true;
+            }
+        } catch (Exception | Error e) {
+            LogUtils.e(TAG, e);
+            callback.onFailure(repoCall, e);
+        } finally {
+            if (response != null) {
+                ResponseBody body = response.body();
+                if (body != null) {
+                    body.close();
+                }
+            }
+        }
+
+        return false;
+    }
 
     public static boolean sendByGet(Context context, String url, Map<String, Object> headers) {
         IRetrofitService service = getRetrofitService(context);

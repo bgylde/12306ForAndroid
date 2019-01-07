@@ -3,7 +3,7 @@ package com.bgylde.ticket.service;
 import android.content.Context;
 import android.content.ContextWrapper;
 
-import com.bgylde.ticket.request.RequestManaager;
+import com.bgylde.ticket.request.utils.RequestManaager;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -17,11 +17,7 @@ public class RequestThread extends Thread {
     private AtomicBoolean isInited = new AtomicBoolean(false);
 
     RequestThread(Context context) {
-        if (context instanceof ContextWrapper) {
-            this.context = context.getApplicationContext();
-        } else {
-            this.context = context;
-        }
+        this.context = context;
     }
 
     @Override
@@ -35,5 +31,6 @@ public class RequestThread extends Thread {
 
     private void initQuery() {
         RequestManaager.getInstance().queryInitPage(context);
+        RequestManaager.getInstance().identifyCodeRequest(context);
     }
 }

@@ -1,4 +1,4 @@
-package com.bgylde.ticket.request;
+package com.bgylde.ticket.request.utils;
 
 import android.content.Context;
 

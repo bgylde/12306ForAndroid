@@ -3,9 +3,10 @@ package com.bgylde.ticket.ui;
 import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
+import android.widget.ImageView;
 
 import com.bgylde.ticket.R;
-import com.bgylde.ticket.service.BindServiceUtils;
+import com.bgylde.ticket.service.ServiceManager;
 
 public class MainActivity extends AbstractActivity {
 
@@ -13,7 +14,9 @@ public class MainActivity extends AbstractActivity {
     private Button queryPause;
     private Button queryStop;
 
-    private BindServiceUtils serviceUtils;
+    private ImageView identifyView;
+
+    private ServiceManager serviceUtils;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,7 +26,7 @@ public class MainActivity extends AbstractActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        serviceUtils = new BindServiceUtils();
+        serviceUtils = new ServiceManager();
         serviceUtils.bindService(this);
     }
 
@@ -43,6 +46,7 @@ public class MainActivity extends AbstractActivity {
         queryStart = (Button) findViewById(R.id.query_start);
         queryPause = (Button) findViewById(R.id.query_pause);
         queryStop = (Button) findViewById(R.id.query_stop);
+        identifyView = (ImageView) findViewById(R.id.identify_code);
     }
 
     @Override
@@ -58,13 +62,15 @@ public class MainActivity extends AbstractActivity {
             int id = v.getId();
             switch (id) {
                 case R.id.query_start:
-                    serviceUtils.startQuery();
+                    // serviceUtils.startQuery();   该场景下使用startService更好
+                    serviceUtils.startService(MainActivity.this);
                     break;
                 case R.id.query_pause:
-                    serviceUtils.pauseQuery();
+                    //serviceUtils.pauseQuery();
                     break;
                 case R.id.query_stop:
-                    serviceUtils.stopQuery();
+                    serviceUtils.stopService(MainActivity.this);
+                    //serviceUtils.stopQuery();
                     break;
             }
         }

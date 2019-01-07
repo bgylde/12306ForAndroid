@@ -3,6 +3,7 @@ package com.bgylde.ticket.request;
 import android.content.Context;
 
 import com.bgylde.ticket.http.RetrofitHttpUtils;
+import com.bgylde.ticket.request.utils.AbsRquest;
 
 /**
  * Created by wangyan on 2019/1/7

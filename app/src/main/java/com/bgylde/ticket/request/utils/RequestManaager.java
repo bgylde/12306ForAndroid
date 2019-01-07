@@ -1,6 +1,9 @@
-package com.bgylde.ticket.request;
+package com.bgylde.ticket.request.utils;
 
 import android.content.Context;
+
+import com.bgylde.ticket.request.IdentifyCodeRequest;
+import com.bgylde.ticket.request.QueryPageRequest;
 
 /**
  * Created by wangyan on 2019/1/7
@@ -12,6 +15,8 @@ public class RequestManaager implements IRequestManager {
     private static RequestManaager instance = null;
 
     private QueryPageRequest queryPageRequest = null;
+
+    private IdentifyCodeRequest identifyCodeRequest = null;
 
     private RequestManaager() {
 
@@ -41,7 +46,11 @@ public class RequestManaager implements IRequestManager {
 
     @Override
     public void identifyCodeRequest(Context context) {
+        if (identifyCodeRequest == null) {
+            identifyCodeRequest = new IdentifyCodeRequest(context);
+        }
 
+        identifyCodeRequest.sendRequest(context);
     }
 
     @Override

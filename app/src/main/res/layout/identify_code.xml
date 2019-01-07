@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="190dp"
+    android:layout_gravity="center">
+
+    <com.bgylde.ticket.ui.IdentifyView
+        android:id="@+id/dialog_identify_code"
+        android:layout_width="293dp"
+        android:layout_height="190dp"
+        android:scaleType="centerCrop"
+        android:layout_gravity="center"
+        android:focusable="true"
+        android:clickable="true"/>
+
+</FrameLayout>

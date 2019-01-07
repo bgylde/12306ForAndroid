@@ -1,6 +1,4 @@
-package com.bgylde.ticket.request;
-
-import android.content.Context;
+package com.bgylde.ticket.request.utils;
 
 import java.util.HashMap;
 import java.util.Map;
