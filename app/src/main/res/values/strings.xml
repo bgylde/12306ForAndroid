@@ -1,0 +1,6 @@
+<resources>
+    <string name="app_name">12306Android</string>
+    <string name="query_start">开始抢票</string>
+    <string name="query_pause">暂停抢票</string>
+    <string name="query_stop">停止抢票</string>
+</resources>
