@@ -12,48 +12,73 @@ import android.os.Looper;
 import android.provider.Settings;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.ImageView;
 
 import com.bgylde.ticket.R;
+import com.bgylde.ticket.request.utils.RequestManaager;
+import com.bgylde.ticket.service.RequestThread;
+import com.bgylde.ticket.ui.IdentifyView;
 
 /**
  * Created by wangyan on 2019/1/7
  */
 public class DialogUtils {
 
-    public static void showDialog(final Context context, final Bitmap bitmap) {
+    private static final String TAG = "DialogUtils";
+
+    public static void showDialog(final Context context, final Bitmap bitmap, final RequestThread.HandleMessage handleMessage) {
         runInUiThread(new Runnable() {
             @Override
             public void run() {
-                requestPermission(context, bitmap);
+                requestPermission(context, bitmap, handleMessage);
             }
         });
     }
 
-    private static void readShowDialog(Context context, Bitmap bitmap) {
+    private static void readShowDialog(final Context context, Bitmap bitmap, final RequestThread.HandleMessage handleMessage) {
         View view = View.inflate(context, R.layout.identify_code, null);
-        ImageView imageView = view.findViewById(R.id.dialog_identify_code);
+        final IdentifyView imageView = view.findViewById(R.id.dialog_identify_code);
         imageView.setImageBitmap(bitmap);
 
+        Button okButton = view.findViewById(R.id.ok);
+        Button cancel = view.findViewById(R.id.cancel);
         AlertDialog.Builder builder = new AlertDialog.Builder(context);
         builder.setView(view);
         final AlertDialog dialog = builder.create();
         //dialog.setCancelable(false);
         dialog.getWindow().setType(WindowManager.LayoutParams.TYPE_SYSTEM_ALERT);
+        okButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                LogUtils.d(TAG, "1231231432432423423");
+                handleMessage.checkIdentifyCode(imageView.getIdentifyPoint());
+                LogUtils.d(TAG, "222222222222222");
+                dialog.dismiss();
+            }
+        });
+
+        cancel.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                dialog.dismiss();
+            }
+        });
+
         dialog.show();
     }
 
-    private static void requestPermission(Context context, Bitmap bitmap) {
+    private static void requestPermission(Context context, Bitmap bitmap, RequestThread.HandleMessage handleMessage) {
         if (Build.VERSION.SDK_INT >= 23) {
             if (!Settings.canDrawOverlays(context)) {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);
                 intent.setData(Uri.parse("package:" + context.getPackageName()));
                 context.startActivity(intent);
             } else {
-                readShowDialog(context, bitmap);
+                readShowDialog(context, bitmap, handleMessage);
             }
         } else {
-            readShowDialog(context, bitmap);
+            readShowDialog(context, bitmap, handleMessage);
         }
     }
 

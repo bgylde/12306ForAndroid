@@ -1,18 +1,9 @@
 package com.bgylde.ticket.service;
 
-import android.app.AlertDialog;
 import android.app.Service;
 import android.content.Intent;
-import android.graphics.Bitmap;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
-import android.view.View;
-import android.view.WindowManager;
-import android.widget.ImageView;
-
-import com.bgylde.ticket.MainApplication;
-import com.bgylde.ticket.R;
-import com.bgylde.ticket.utils.DialogUtils;
 
 /**
  * Created by wangyan on 2019/1/7
@@ -31,7 +22,6 @@ public class PollService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         startQueryThread();
-
         return START_STICKY;
     }
 
@@ -39,6 +29,7 @@ public class PollService extends Service {
     public void onDestroy() {
         super.onDestroy();
         if (requestThread != null) {
+            requestThread.interrupt();
             requestThread = null;
         }
     }
@@ -51,7 +42,7 @@ public class PollService extends Service {
     }
 
     private void startQueryThread() {
-        if (requestThread == null || !requestThread.isAlive()) {
+        if (requestThread == null || !requestThread.isAlive() || requestThread.isInterrupted()) {
             requestThread = new RequestThread(this);
             requestThread.start();
         }

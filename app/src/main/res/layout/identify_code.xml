@@ -1,18 +1,34 @@
 <?xml version="1.0" encoding="utf-8"?>
-<FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="190dp"
-    android:layout_gravity="center">
+    android:layout_height="wrap_content">
 
     <com.bgylde.ticket.ui.IdentifyView
         android:id="@+id/dialog_identify_code"
         android:layout_width="293dp"
         android:layout_height="190dp"
         android:scaleType="centerCrop"
-        android:layout_gravity="center"
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentTop="true"
         android:focusable="true"
         android:clickable="true"/>
 
-</FrameLayout>
+    <Button
+        android:id="@+id/ok"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignLeft="@id/dialog_identify_code"
+        android:layout_below="@id/dialog_identify_code"
+        android:text="@string/ok"/>
+
+    <Button
+        android:id="@+id/cancel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBaseline="@id/ok"
+        android:layout_alignRight="@id/dialog_identify_code"
+        android:text="@string/cancel"/>
+
+</RelativeLayout>

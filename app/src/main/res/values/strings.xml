@@ -3,4 +3,7 @@
     <string name="query_start">开始抢票</string>
     <string name="query_pause">暂停抢票</string>
     <string name="query_stop">停止抢票</string>
+
+    <string name="ok">确定</string>
+    <string name="cancel">取消</string>
 </resources>
