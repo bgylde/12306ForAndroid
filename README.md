@@ -1,15 +1,15 @@
-#1、请求抢票页面 
+# 1、请求抢票页面 
 ```
 curl -H 'Referer:https://kyfw.12306.cn/otn/login/init' -H 'Host:kyfw.12306.cn' https://kyfw.12306.cn/otn/leftTicket/init
 此时返回cookies，记录用于之后的请求
 ```
-#2、登录账号
+# 2、登录账号
 
 ## a. 下载验证码
 ```
 curl -H 'Referer:https://kyfw.12306.cn/otn/login/init' -H 'Host:kyfw.12306.cn' https://kyfw.12306.cn/passport/captcha/captcha-image?login_site=E&module=login&rand=sjrand&35
 ```
-![avatar][AuthCode.png]
+ ![avatar][AuthCode.png]
 ## b. 认证 带cookie
 ```
 curl -H 'Referer:https://kyfw.12306.cn/otn/passport?redirect=/otn/login/userLogin' -H 'Host:kyfw.12306.cn' -b "JSESSIONID=DA1413B17835754D9E62E23F073E12C3;route=6f50b51faa11b987e576cdb301e545c4;BIGipServerotn=1290797578.50210.0000;BIGipServerpool_passport=166527498.50215.0000;_passport_session=66b5b00eb46149caa3da585edc8e25ee8178;_passport_ct=375389e6d3754cdabdcb1684556812cdt0304" -d "appid=otn" https://kyfw.12306.cn/passport/web/auth/uamtk
@@ -18,11 +18,11 @@ curl -H 'Referer:https://kyfw.12306.cn/otn/passport?redirect=/otn/login/userLogi
 ```
 curl -H 'Referer:https://kyfw.12306.cn/otn/login/init' -H 'Host:kyfw.12306.cn' -b "JSESSIONID=DA1413B17835754D9E62E23F073E12C3;route=6f50b51faa11b987e576cdb301e545c4;BIGipServerotn=1290797578.50210.0000;BIGipServerpool_passport=166527498.50215.0000;_passport_session=66b5b00eb46149caa3da585edc8e25ee8178;_passport_ct=375389e6d3754cdabdcb1684556812cdt0304" -d "answer=46,42,46,105,45,184,48,256,36,117,112,112,114,181,111,252&rand=sjrand&login_site=E" https://kyfw.12306.cn/passport/captcha/captcha-check
 ```
-##d. 检查用户登录 带cookie
+## d. 检查用户登录 带cookie
 ```
 curl -H 'Referer:https://kyfw.12306.cn/otn/leftTicket/init' -H 'Host:kyfw.12306.cn' -b "JSESSIONID=DA1413B17835754D9E62E23F073E12C3;route=6f50b51faa11b987e576cdb301e545c4;BIGipServerotn=1290797578.50210.0000;BIGipServerpool_passport=166527498.50215.0000;_passport_session=66b5b00eb46149caa3da585edc8e25ee8178;_passport_ct=375389e6d3754cdabdcb1684556812cdt0304" -d "_json_att=" https://kyfw.12306.cn/otn/login/checkUser
 ```
-#3、循环查询剩余票数（定时检查用户登录状态）
+# 3、循环查询剩余票数（定时检查用户登录状态）
 ## a. 检查是否是12306休息时间 23：00--06：00休息
 ## b. 查询余票 带cookie，也需要cookie来设置query url
 ```
@@ -77,31 +77,31 @@ curl -H 'Referer:https://kyfw.12306.cn/otn/leftTicket/init' -H 'Host:kyfw.12306.
               "status": true
           }
 ```
-#4、获取联系人： 带cookies
+# 4、获取联系人： 带cookies
 ```
 curl -H 'Referer:https://kyfw.12306.cn/otn/confirmPassenger/initDc' -H 'Host:kyfw.12306.cn' -b "JSESSIONID=DA1413B17835754D9E62E23F073E12C3;route=6f50b51faa11b987e576cdb301e545c4;BIGipServerotn=1290797578.50210.0000;BIGipServerpool_passport=166527498.50215.0000;_passport_session=66b5b00eb46149caa3da585edc8e25ee8178;_passport_ct=375389e6d3754cdabdcb1684556812cdt0304" -d "" https://kyfw.12306.cn/otn/confirmPassenger/getPassengerDTOs
 ```
-#5、提交订单： 带cookies
-##a. 快速下单：
-###1. 下单
+# 5、提交订单： 带cookies
+## a. 快速下单：
+### 1. 下单
 ```
 curl -H 'Referer:https://kyfw.12306.cn/otn/leftTicket/init' -H 'Host:kyfw.12306.cn' -b "JSESSIONID=DA1413B17835754D9E62E23F073E12C3;route=6f50b51faa11b987e576cdb301e545c4;BIGipServerotn=1290797578.50210.0000;BIGipServerpool_passport=166527498.50215.0000;_passport_session=66b5b00eb46149caa3da585edc8e25ee8178;_passport_ct=375389e6d3754cdabdcb1684556812cdt0304" -d "secretStr={0}&train_date={1}&tour_flag=dc&purpose_codes=ADULT&query_from_station_name={2}&query_to_station_name={3}&cancel_flag=2&bed_level_order_num=000000000000000000000000000000&passengerTicketStr={4}&oldPassengerStr={5}" https://kyfw.12306.cn/otn/confirmPassenger/autoSubmitOrderRequest
 ```
-###2. 验证码提交验证
-###3. 请求排队接口
+### 2. 验证码提交验证
+### 3. 请求排队接口
 ```
 curl -H 'Referer:https://kyfw.12306.cn/otn/leftTicket/init' -H 'Host:kyfw.12306.cn' -b "JSESSIONID=DA1413B17835754D9E62E23F073E12C3;route=6f50b51faa11b987e576cdb301e545c4;BIGipServerotn=1290797578.50210.0000;BIGipServerpool_passport=166527498.50215.0000;_passport_session=66b5b00eb46149caa3da585edc8e25ee8178;_passport_ct=375389e6d3754cdabdcb1684556812cdt0304" -d "train_date={0}&train_no={1}&stationTrainCode={2}&seatType={3}&fromStationTelecode={4}&toStationTelecode={5}&leftTicket={6}&purpose_codes=ADULT&_json_att=" https://kyfw.12306.cn/otn/confirmPassenger/getQueueCountAsync
 ```
-##b. 普通下单：
-###1. 下单
+## b. 普通下单：
+### 1. 下单
 ```
 curl -H 'Referer:https://kyfw.12306.cn/otn/leftTicket/init' -H 'Host:kyfw.12306.cn' -b "JSESSIONID=DA1413B17835754D9E62E23F073E12C3;route=6f50b51faa11b987e576cdb301e545c4;BIGipServerotn=1290797578.50210.0000;BIGipServerpool_passport=166527498.50215.0000;_passport_session=66b5b00eb46149caa3da585edc8e25ee8178;_passport_ct=375389e6d3754cdabdcb1684556812cdt0304" -d "secretStr={0}&train_date={1}&back_train_date={2}&tour_flag=dc&purpose_codes=ADULT&query_from_station_name={3}&query_to_station_name={4}" https://kyfw.12306.cn/otn/leftTicket/submitOrderRequest
 ```
-###2. 检查支付订单(检查订单信息规范)
+### 2. 检查支付订单(检查订单信息规范)
 ```
 curl -H 'Referer:https://kyfw.12306.cn/otn/confirmPassenger/initDc' -H 'Host:kyfw.12306.cn' -b "JSESSIONID=DA1413B17835754D9E62E23F073E12C3;route=6f50b51faa11b987e576cdb301e545c4;BIGipServerotn=1290797578.50210.0000;BIGipServerpool_passport=166527498.50215.0000;_passport_session=66b5b00eb46149caa3da585edc8e25ee8178;_passport_ct=375389e6d3754cdabdcb1684556812cdt0304" -d "passengerTicketStr={0}&oldPassengerStr={2}&REPEAT_SUBMIT_TOKEN={3}&randCode=&cancel_flag=2&bed_level_order_num=000000000000000000000000000000&tour_flag=dc&_json_att=" https://kyfw.12306.cn/otn/confirmPassenger/checkOrderInfo
 ```
-###3. 排队
+### 3. 排队
 ```
 curl -H 'Referer:https://kyfw.12306.cn/otn/confirmPassenger/initDc' -H 'Host:kyfw.12306.cn' -b "JSESSIONID=DA1413B17835754D9E62E23F073E12C3;route=6f50b51faa11b987e576cdb301e545c4;BIGipServerotn=1290797578.50210.0000;BIGipServerpool_passport=166527498.50215.0000;_passport_session=66b5b00eb46149caa3da585edc8e25ee8178;_passport_ct=375389e6d3754cdabdcb1684556812cdt0304" -d "train_date={0}&train_no={1}&stationTrainCode={2}&seatType={3}&fromStationTelecode={4}&toStationTelecode={5}&leftTicket={6}&purpose_codes={7}&train_location={8}&REPEAT_SUBMIT_TOKEN={9}" https://kyfw.12306.cn/otn/confirmPassenger/getQueueCount
 ```
