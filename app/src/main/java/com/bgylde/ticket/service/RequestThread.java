@@ -92,7 +92,7 @@ public class RequestThread extends HandlerThread {
                             RequestManaager.getInstance().sendIdentifyCheckRequest(context, answer);
                     if (res != null && "4".equals(res.getResult_code())) {
                         LoginResponse loginResponse = RequestManaager.getInstance().
-                                sendUserLogin(context, "bgylde", "wy749900");
+                                sendUserLogin(context, "", "");
                         if (loginResponse != null && loginResponse.getResult_code() == 0) {
                             // 登录成功
                             AuthResponse authResponse = RequestManaager.getInstance().sendAuthRequest(context);
