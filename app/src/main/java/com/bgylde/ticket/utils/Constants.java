@@ -6,4 +6,6 @@ package com.bgylde.ticket.utils;
 public class Constants {
 
     public final static boolean DEBUG = true;
+
+    public final static String DATABASE = "12306Config.db";
 }

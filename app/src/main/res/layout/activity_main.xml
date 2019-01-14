@@ -5,10 +5,26 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <ImageView
-        android:id="@+id/identify_code"
-        android:layout_width="wrap_content"
+    <EditText
+        android:id="@+id/username"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:hint="@string/input_username"/>
+
+    <EditText
+        android:id="@+id/password"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_below="@id/username"
+        android:layout_marginTop="10dp"
+        android:hint="@string/input_password"/>
+
+    <com.bgylde.ticket.ui.IdentifyView
+        android:id="@+id/identify_code"
+        android:layout_width="293dp"
+        android:layout_height="190dp"
+        android:baselineAlignBottom="true"
         android:layout_alignParentBottom="true"
         android:scaleType="centerCrop"/>
 
@@ -16,7 +32,8 @@
         android:id="@+id/query_start"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="@string/query_start"/>
+        android:layout_below="@id/password"
+        android:text="@string/login"/>
 
     <Button
         android:id="@+id/query_pause"
@@ -24,7 +41,8 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/query_start"
         android:layout_marginTop="10dp"
-        android:text="@string/query_pause"/>
+        android:text="@string/query_pause"
+        android:visibility="gone"/>
 
     <Button
         android:id="@+id/query_stop"
@@ -32,6 +50,7 @@
         android:layout_height="wrap_content"
         android:layout_below="@id/query_pause"
         android:layout_marginTop="10dp"
-        android:text="@string/query_stop"/>
+        android:text="@string/query_stop"
+        android:visibility="gone"/>
 
 </RelativeLayout>

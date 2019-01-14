@@ -14,6 +14,7 @@ import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.ImageView;
+import android.widget.Toast;
 
 import com.bgylde.ticket.R;
 import com.bgylde.ticket.request.utils.RequestManaager;
@@ -51,9 +52,7 @@ public class DialogUtils {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                LogUtils.d(TAG, "1231231432432423423");
                 handleMessage.checkIdentifyCode(imageView.getIdentifyPoint());
-                LogUtils.d(TAG, "222222222222222");
                 dialog.dismiss();
             }
         });
@@ -107,5 +106,18 @@ public class DialogUtils {
         }
 
         return null;
+    }
+
+    public static void showToast(final Context context, final String showStr) {
+        if (Looper.getMainLooper() == Looper.myLooper()) {
+            Toast.makeText(context, showStr, Toast.LENGTH_SHORT).show();
+        } else {
+            runInUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toast.makeText(context, showStr, Toast.LENGTH_SHORT).show();
+                }
+            });
+        }
     }
 }

@@ -21,6 +21,7 @@ import java.io.StringReader;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import okhttp3.Callback;
 import okhttp3.Interceptor;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
@@ -408,7 +409,7 @@ public class RetrofitHttpUtils {
     }
 
     // 查询余票
-    public static QueryTicketsResponse sendQueryTickets(Context context, String url, Map<String, Object> headers) {
+    public static QueryTicketsResponse sendQueryTicketsAnsyc(Context context, String url, Map<String, Object> headers) {
         IRetrofitService service = getRetrofitService(context);
 
         Call<QueryTicketsResponse> repoCall = null;
@@ -439,6 +440,25 @@ public class RetrofitHttpUtils {
         }
 
         return null;
+    }
+
+    // 查询余票--异步接口
+    public static void sendQueryTickets(Context context, String url, Map<String, Object> headers, retrofit2.Callback<QueryTicketsResponse> callback) {
+        IRetrofitService service = getRetrofitService(context);
+
+        Call<QueryTicketsResponse> repoCall = null;
+        if (headers == null || headers.size() <= 0) {
+            return;
+        } else {
+            repoCall = service.sendQueryTickets(url, headers);
+        }
+
+        try {
+            repoCall.enqueue(callback);
+
+        } catch (Exception | Error e) {
+            LogUtils.e(TAG, e);
+        }
     }
 
     // 获取联系人

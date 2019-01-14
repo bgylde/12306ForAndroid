@@ -45,7 +45,9 @@ public class QueryTicketItemModel {
 
     private String secondSeat;      // 30 二等座
 
-    public QueryTicketItemModel(String str) {
+    private String date;
+
+    public QueryTicketItemModel(String str, String date) {
         String[] list = str.split("\\|");
         secretSrt = list[1];
         status = list[1];
@@ -66,6 +68,8 @@ public class QueryTicketItemModel {
         bussinessSeat = list[32];
         firstSeat = list[31];
         secondSeat = list[30];
+
+        this.date = date;
     }
 
     public String getToStation() {
@@ -144,6 +148,10 @@ public class QueryTicketItemModel {
         return voidSeat;
     }
 
+    public String getDate() {
+        return date;
+    }
+
     public void setStatus(String status) {
         this.status = status;
     }
@@ -218,5 +226,9 @@ public class QueryTicketItemModel {
 
     public void setVoidSeat(String voidSeat) {
         this.voidSeat = voidSeat;
+    }
+
+    public void setDate(String date) {
+        this.date = date;
     }
 }

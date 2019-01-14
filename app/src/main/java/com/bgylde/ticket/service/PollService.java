@@ -5,6 +5,8 @@ import android.content.Intent;
 import android.os.IBinder;
 import android.support.annotation.Nullable;
 
+import com.bgylde.ticket.http.CookiesManager;
+
 /**
  * Created by wangyan on 2019/1/7
  */
@@ -21,6 +23,7 @@ public class PollService extends Service {
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
+        CookiesManager.getInstance().initDbCookie();
         startQueryThread();
         return START_STICKY;
     }

@@ -16,6 +16,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import okhttp3.ResponseBody;
+import retrofit2.Callback;
 
 /**
  * Created by wangyan on 2019/1/7
@@ -124,13 +125,23 @@ public class RequestManaager {
     }
 
     // https://kyfw.12306.cn/otn/leftTicket/queryZ?leftTicketDTO.train_date=2019-02-01&leftTicketDTO.from_station=BXP&leftTicketDTO.to_station=TNV&purpose_codes=ADULT
-    public QueryTicketsResponse sendQueryTickets(Context context, String trainDate, String fromStation, String toStation) {
-        String sb = "otn/leftTicket/queryZ?" +
+    public QueryTicketsResponse sendQueryTicketsAnsyc(Context context, String trainDate, String fromStation, String toStation) {
+        String uri = "otn/leftTicket/queryZ?" +
                 "leftTicketDTO.train_date=" + trainDate +
                 "&leftTicketDTO.from_station=" + fromStation +
                 "&leftTicketDTO.to_station=" + toStation +
                 "&purpose_codes=ADULT";
 
-        return RetrofitHttpUtils.sendQueryTickets(context, sb, buildHeader(REFERER_QUERY_TICKETS));
+        return RetrofitHttpUtils.sendQueryTicketsAnsyc(context, uri, buildHeader(REFERER_QUERY_TICKETS));
+    }
+
+    public void sendQueryTickets(Context context, String trainDate, String fromStation, String toStation, Callback<QueryTicketsResponse> callback) {
+        String uri = "otn/leftTicket/queryZ?" +
+                "leftTicketDTO.train_date=" + trainDate +
+                "&leftTicketDTO.from_station=" + fromStation +
+                "&leftTicketDTO.to_station=" + toStation +
+                "&purpose_codes=ADULT";
+
+        RetrofitHttpUtils.sendQueryTickets(context, uri, buildHeader(REFERER_QUERY_TICKETS), callback);
     }
 }

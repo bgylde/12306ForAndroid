@@ -14,12 +14,18 @@ import com.bgylde.ticket.request.model.QueryTicketsResponse;
 import com.bgylde.ticket.request.model.UserCheckResponse;
 import com.bgylde.ticket.request.model.UserInfoResponse;
 import com.bgylde.ticket.request.utils.RequestManaager;
+import com.bgylde.ticket.ui.model.EventBusCarrier;
+import com.bgylde.ticket.utils.ConfigureManager;
 import com.bgylde.ticket.utils.DialogUtils;
 import com.bgylde.ticket.utils.LogUtils;
+
+import org.greenrobot.eventbus.EventBus;
 
 import java.util.List;
 
 import okhttp3.ResponseBody;
+
+import static com.bgylde.ticket.ui.model.EventBusCarrier.LOGING_SUCCESSFUL_CODE;
 
 /**
  * Created by wangyan on 2019/1/7
@@ -50,14 +56,28 @@ public class RequestThread extends HandlerThread {
             handler = new Handler(getLooper());
         }
 
-        initQuery();
-//        while (!isDestory) {
-//            try {
-//                //RequestManaager.getInstance().sendUserCheckRequest(context);
-//            } catch (Exception e) {
-//                LogUtils.e(TAG, e);
-//            }
-//        }
+        UserCheckResponse response = RequestManaager.getInstance().sendUserCheckRequest(context);
+        if (response != null) {
+            if (response.getData() != null && response.getData().getFlag()) {
+                AuthResponse authResponse = RequestManaager.getInstance().sendAuthRequest(context);
+                if (authResponse == null) {
+                    LogUtils.d(TAG, "authResponse null.");
+                    initQuery();
+                }
+
+                UserInfoResponse userInfoResponse = RequestManaager.getInstance().sendUserInfoRequest(context, authResponse.getNewapptk());
+                if (userInfoResponse == null || userInfoResponse.getResult_code() != 0) {
+                    LogUtils.w(TAG, "User login error!");
+                    initQuery();
+                }
+
+                LogUtils.i(TAG, "Welcome user[" + userInfoResponse.getUsername() + "] login.");
+                EventBus.getDefault().post(new EventBusCarrier(LOGING_SUCCESSFUL_CODE, userInfoResponse));
+            } else {
+                LogUtils.w(TAG, "Login!");
+                initQuery();
+            }
+        }
     }
 
     private void initQuery() {
@@ -72,6 +92,7 @@ public class RequestThread extends HandlerThread {
         }
 
         DialogUtils.showDialog(context, bitmap, handleMessage);
+        // EventBus.getDefault().post(new EventBusCarrier(EventBusCarrier.IDENTIFY_CODE, bitmap));
         AuthResponse authResponse = RequestManaager.getInstance().sendAuthRequest(context);
         if (authResponse == null || authResponse.getResult_code() == 0) {
             LogUtils.d(TAG, "authResponse: " + authResponse.getResult_message());
@@ -92,7 +113,8 @@ public class RequestThread extends HandlerThread {
                             RequestManaager.getInstance().sendIdentifyCheckRequest(context, answer);
                     if (res != null && "4".equals(res.getResult_code())) {
                         LoginResponse loginResponse = RequestManaager.getInstance().
-                                sendUserLogin(context, "", "");
+                                sendUserLogin(context, ConfigureManager.getInstance().getAccountUser(),
+                                        ConfigureManager.getInstance().getAccountPwd());
                         if (loginResponse != null && loginResponse.getResult_code() == 0) {
                             // 登录成功
                             AuthResponse authResponse = RequestManaager.getInstance().sendAuthRequest(context);
@@ -107,7 +129,9 @@ public class RequestThread extends HandlerThread {
                             }
 
                             LogUtils.i(TAG, "Welcome user[" + userInfoResponse.getUsername() + "] login.");
-                            queryTicket();
+                            EventBus.getDefault().post(new EventBusCarrier(LOGING_SUCCESSFUL_CODE, userInfoResponse));
+
+                            //queryTicket();
                         }
                     } else {
                         Bitmap bitmap = RequestManaager.getInstance().sendIdentifyCodeRequest(context);
@@ -115,6 +139,7 @@ public class RequestThread extends HandlerThread {
                             return;
                         }
 
+                        // EventBus.getDefault().post(new EventBusCarrier(EventBusCarrier.IDENTIFY_CODE, bitmap));
                         DialogUtils.showDialog(context, bitmap, handleMessage);
                     }
                 }
@@ -136,11 +161,11 @@ public class RequestThread extends HandlerThread {
                 }
             }
 
-            QueryTicketsResponse response = RequestManaager.getInstance().sendQueryTickets(context, "2019-02-01", "BXP", "TNV");
+            QueryTicketsResponse response = RequestManaager.getInstance().sendQueryTicketsAnsyc(context, "2019-02-01", "BXP", "TNV");
             if (response != null) {
                 List<String> list = response.getData().getResult();
                 for (String itemStr : list) {
-                    QueryTicketItemModel model = new QueryTicketItemModel(itemStr);
+                    QueryTicketItemModel model = new QueryTicketItemModel(itemStr, "2019-02-01");
                     if (model.getResult().equals("Y") && model.getStatus().equals("预定")) {
 
                     }

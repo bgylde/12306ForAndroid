@@ -31,4 +31,9 @@ public abstract class AbstractActivity extends FragmentActivity {
     protected abstract void initView();
 
     protected abstract void initListener();
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+    }
 }
