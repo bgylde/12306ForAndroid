@@ -23,6 +23,12 @@ public class UserConfigModel {
     @Id(autoincrement = true)
     private long configId;
 
+    @Property(nameInDb = "accountUser")
+    private String userName;
+
+    @Property(nameInDb = "accountPwd")
+    private String userPasswd;
+
     @NotNull
     @Property
     private String fromStation;
@@ -47,11 +53,13 @@ public class UserConfigModel {
     @Generated(hash = 1415928471)
     private transient UserConfigModelDao myDao;
 
-    @Generated(hash = 1515788769)
-    public UserConfigModel(long configId, @NotNull String fromStation,
-            @NotNull String toStation, List<String> stationDate,
+    @Generated(hash = 199283258)
+    public UserConfigModel(long configId, String userName, String userPasswd,
+            @NotNull String fromStation, @NotNull String toStation, List<String> stationDate,
             List<String> trainCodeList) {
         this.configId = configId;
+        this.userName = userName;
+        this.userPasswd = userPasswd;
         this.fromStation = fromStation;
         this.toStation = toStation;
         this.stationDate = stationDate;
@@ -143,5 +151,21 @@ public class UserConfigModel {
     public void __setDaoSession(DaoSession daoSession) {
         this.daoSession = daoSession;
         myDao = daoSession != null ? daoSession.getUserConfigModelDao() : null;
+    }
+
+    public String getUserName() {
+        return this.userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
+    }
+
+    public String getUserPasswd() {
+        return this.userPasswd;
+    }
+
+    public void setUserPasswd(String userPasswd) {
+        this.userPasswd = userPasswd;
     }
 }

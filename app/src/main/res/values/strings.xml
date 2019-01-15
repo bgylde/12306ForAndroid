@@ -2,10 +2,9 @@
     <string name="app_name">12306Android</string>
 
     <string name="login">登录</string>
+    <string name="no_login">暂不登录</string>
 
     <string name="query_start">开始抢票</string>
-    <string name="query_pause">暂停抢票</string>
-    <string name="query_stop">停止抢票</string>
 
     <string name="ok">确定</string>
     <string name="cancel">取消</string>
@@ -17,4 +16,6 @@
     <string name="to_station_text">终点站：</string>
     <string name="order_date">订票日期: </string>
     <string name="query">查询</string>
+
+    <string name="info">信息展示</string>
 </resources>

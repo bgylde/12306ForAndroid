@@ -63,7 +63,7 @@ public class CookiesManager {
                 String[] result = header.split("=");
                 if (result.length > 0) {
                     cookiesMap.put(result[0], header);
-                    model.setCookieId(header.hashCode());
+                    model.setCookieId(result[0].hashCode());
                     model.setTitle(result[0]);
                     model.setCookie(header);
                     CookieDbManager.getInstance().insertOrReplace(model);

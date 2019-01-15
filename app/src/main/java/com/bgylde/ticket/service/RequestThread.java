@@ -69,6 +69,7 @@ public class RequestThread extends HandlerThread {
                 if (userInfoResponse == null || userInfoResponse.getResult_code() != 0) {
                     LogUtils.w(TAG, "User login error!");
                     initQuery();
+                    return;
                 }
 
                 LogUtils.i(TAG, "Welcome user[" + userInfoResponse.getUsername() + "] login.");

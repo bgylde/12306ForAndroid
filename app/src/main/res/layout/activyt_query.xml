@@ -7,11 +7,12 @@
 
     <TextView
         android:id="@+id/user"
-        android:layout_width="match_parent"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_centerHorizontal="true"
+        android:layout_marginTop="16dp"
         android:includeFontPadding="false"
-        android:textSize="16sp"/>
+        android:textSize="22sp"/>
 
     <View
         android:id="@+id/line"
@@ -72,38 +73,57 @@
         android:layout_toRightOf="@id/order_date"
         android:textSize="16sp"/>
 
-    <Button
-        android:id="@+id/query"
-        android:layout_width="wrap_content"
+    <LinearLayout
+        android:id="@+id/button_layout"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/order_date"
         android:layout_marginTop="5dp"
-        android:text="@string/query"
-        android:textSize="16sp"/>
+        android:weightSum="2"
+        android:orientation="horizontal">
 
-    <Button
-        android:id="@+id/quert_start"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/query"
-        android:layout_alignParentRight="true"
-        android:text="@string/query_start"
-        android:textSize="16sp"/>
+        <Button
+            android:id="@+id/query"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/query"
+            android:focusable="true"
+            android:textSize="16sp"/>
+
+        <Button
+            android:id="@+id/quert_start"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="@string/query_start"
+            android:textSize="16sp"/>
+    </LinearLayout>
+
 
     <TextView
         android:id="@+id/process_info"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/query"
+        android:layout_below="@id/button_layout"
         android:layout_marginTop="10dp"
-        android:textSize="16sp"/>
+        android:gravity="center"
+        android:textSize="16sp"
+        android:text="@string/info"/>
+
+    <View
+        android:id="@+id/single_line"
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@id/process_info"
+        android:layout_marginTop="5dp"
+        android:background="#000000"/>
 
     <android.support.v7.widget.RecyclerView
         android:id="@+id/ticket_list"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        android:layout_below="@id/process_info"
-        android:layout_marginTop="10dp">
+        android:layout_below="@id/single_line">
 
     </android.support.v7.widget.RecyclerView>
 

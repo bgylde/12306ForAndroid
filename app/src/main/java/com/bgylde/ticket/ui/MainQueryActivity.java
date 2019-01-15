@@ -5,11 +5,13 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.DefaultItemAnimator;
+import android.support.v7.widget.DividerItemDecoration;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.bgylde.ticket.MainApplication;
@@ -20,6 +22,7 @@ import com.bgylde.ticket.request.utils.RequestManaager;
 import com.bgylde.ticket.ui.model.RecyclerViewAdapter;
 import com.bgylde.ticket.utils.DialogUtils;
 import com.bgylde.ticket.utils.LogUtils;
+import com.bgylde.ticket.utils.StringUtils;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -63,12 +66,17 @@ public class MainQueryActivity extends AbstractActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        userText.setText("当前用户：" + username);
+        if (!StringUtils.isNotBlank(username)) {
+            userText.setText("未登录");
+        } else {
+            userText.setText(username);
+        }
 
         from_station_input.setText("北京");
         to_station_input.setText("太原");
-
         order_date_input.setText("2019-02-01");
+
+        query.requestFocus();
     }
 
     @Override
@@ -87,7 +95,10 @@ public class MainQueryActivity extends AbstractActivity {
         process_info = (TextView) findViewById(R.id.process_info);
         ticket_list = (RecyclerView) findViewById(R.id.ticket_list);
 
-        ticket_list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+        LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
+        DividerItemDecoration itemDecoration = new DividerItemDecoration(this, manager.getOrientation());
+        ticket_list.setLayoutManager(manager);
+        ticket_list.addItemDecoration(itemDecoration);
         ticketItemModels = new ArrayList<>();
         adapter = new RecyclerViewAdapter(ticketItemModels);
         ticket_list.setItemAnimator(new DefaultItemAnimator());

@@ -20,37 +20,34 @@
         android:layout_marginTop="10dp"
         android:hint="@string/input_password"/>
 
-    <com.bgylde.ticket.ui.IdentifyView
-        android:id="@+id/identify_code"
-        android:layout_width="293dp"
-        android:layout_height="190dp"
-        android:baselineAlignBottom="true"
-        android:layout_alignParentBottom="true"
-        android:scaleType="centerCrop"/>
-
     <Button
-        android:id="@+id/query_start"
+        android:id="@+id/login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_below="@id/password"
         android:text="@string/login"/>
 
     <Button
-        android:id="@+id/query_pause"
+        android:id="@+id/no_login"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_below="@id/query_start"
+        android:layout_below="@id/login"
         android:layout_marginTop="10dp"
-        android:text="@string/query_pause"
-        android:visibility="gone"/>
+        android:text="@string/no_login"/>
 
-    <Button
-        android:id="@+id/query_stop"
+    <LinearLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/query_pause"
-        android:layout_marginTop="10dp"
-        android:text="@string/query_stop"
-        android:visibility="gone"/>
+        android:layout_height="match_parent"
+        android:layout_below="@id/no_login"
+        android:gravity="center">
+
+        <com.bgylde.ticket.ui.IdentifyView
+            android:id="@+id/identify_code"
+            android:layout_width="293dp"
+            android:layout_height="190dp"
+            android:baselineAlignBottom="true"
+            android:scaleType="centerCrop"/>
+
+    </LinearLayout>
 
 </RelativeLayout>

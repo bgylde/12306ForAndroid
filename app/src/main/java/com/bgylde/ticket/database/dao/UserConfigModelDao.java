@@ -28,10 +28,12 @@ public class UserConfigModelDao extends AbstractDao<UserConfigModel, Long> {
      */
     public static class Properties {
         public final static Property ConfigId = new Property(0, long.class, "configId", true, "_id");
-        public final static Property FromStation = new Property(1, String.class, "fromStation", false, "FROM_STATION");
-        public final static Property ToStation = new Property(2, String.class, "toStation", false, "TO_STATION");
-        public final static Property StationDate = new Property(3, String.class, "stationDate", false, "STATION_DATE");
-        public final static Property TrainCodeList = new Property(4, String.class, "trainCodeList", false, "TRAIN_CODE_LIST");
+        public final static Property UserName = new Property(1, String.class, "userName", false, "accountUser");
+        public final static Property UserPasswd = new Property(2, String.class, "userPasswd", false, "accountPwd");
+        public final static Property FromStation = new Property(3, String.class, "fromStation", false, "FROM_STATION");
+        public final static Property ToStation = new Property(4, String.class, "toStation", false, "TO_STATION");
+        public final static Property StationDate = new Property(5, String.class, "stationDate", false, "STATION_DATE");
+        public final static Property TrainCodeList = new Property(6, String.class, "trainCodeList", false, "TRAIN_CODE_LIST");
     }
 
     private DaoSession daoSession;
@@ -53,10 +55,12 @@ public class UserConfigModelDao extends AbstractDao<UserConfigModel, Long> {
         String constraint = ifNotExists? "IF NOT EXISTS ": "";
         db.execSQL("CREATE TABLE " + constraint + "\"UserConfigTable\" (" + //
                 "\"_id\" INTEGER PRIMARY KEY AUTOINCREMENT NOT NULL UNIQUE ," + // 0: configId
-                "\"FROM_STATION\" TEXT NOT NULL ," + // 1: fromStation
-                "\"TO_STATION\" TEXT NOT NULL ," + // 2: toStation
-                "\"STATION_DATE\" TEXT," + // 3: stationDate
-                "\"TRAIN_CODE_LIST\" TEXT);"); // 4: trainCodeList
+                "\"accountUser\" TEXT," + // 1: userName
+                "\"accountPwd\" TEXT," + // 2: userPasswd
+                "\"FROM_STATION\" TEXT NOT NULL ," + // 3: fromStation
+                "\"TO_STATION\" TEXT NOT NULL ," + // 4: toStation
+                "\"STATION_DATE\" TEXT," + // 5: stationDate
+                "\"TRAIN_CODE_LIST\" TEXT);"); // 6: trainCodeList
     }
 
     /** Drops the underlying database table. */
@@ -69,17 +73,27 @@ public class UserConfigModelDao extends AbstractDao<UserConfigModel, Long> {
     protected final void bindValues(DatabaseStatement stmt, UserConfigModel entity) {
         stmt.clearBindings();
         stmt.bindLong(1, entity.getConfigId());
-        stmt.bindString(2, entity.getFromStation());
-        stmt.bindString(3, entity.getToStation());
+ 
+        String userName = entity.getUserName();
+        if (userName != null) {
+            stmt.bindString(2, userName);
+        }
+ 
+        String userPasswd = entity.getUserPasswd();
+        if (userPasswd != null) {
+            stmt.bindString(3, userPasswd);
+        }
+        stmt.bindString(4, entity.getFromStation());
+        stmt.bindString(5, entity.getToStation());
  
         List stationDate = entity.getStationDate();
         if (stationDate != null) {
-            stmt.bindString(4, stationDateConverter.convertToDatabaseValue(stationDate));
+            stmt.bindString(6, stationDateConverter.convertToDatabaseValue(stationDate));
         }
  
         List trainCodeList = entity.getTrainCodeList();
         if (trainCodeList != null) {
-            stmt.bindString(5, trainCodeListConverter.convertToDatabaseValue(trainCodeList));
+            stmt.bindString(7, trainCodeListConverter.convertToDatabaseValue(trainCodeList));
         }
     }
 
@@ -87,17 +101,27 @@ public class UserConfigModelDao extends AbstractDao<UserConfigModel, Long> {
     protected final void bindValues(SQLiteStatement stmt, UserConfigModel entity) {
         stmt.clearBindings();
         stmt.bindLong(1, entity.getConfigId());
-        stmt.bindString(2, entity.getFromStation());
-        stmt.bindString(3, entity.getToStation());
+ 
+        String userName = entity.getUserName();
+        if (userName != null) {
+            stmt.bindString(2, userName);
+        }
+ 
+        String userPasswd = entity.getUserPasswd();
+        if (userPasswd != null) {
+            stmt.bindString(3, userPasswd);
+        }
+        stmt.bindString(4, entity.getFromStation());
+        stmt.bindString(5, entity.getToStation());
  
         List stationDate = entity.getStationDate();
         if (stationDate != null) {
-            stmt.bindString(4, stationDateConverter.convertToDatabaseValue(stationDate));
+            stmt.bindString(6, stationDateConverter.convertToDatabaseValue(stationDate));
         }
  
         List trainCodeList = entity.getTrainCodeList();
         if (trainCodeList != null) {
-            stmt.bindString(5, trainCodeListConverter.convertToDatabaseValue(trainCodeList));
+            stmt.bindString(7, trainCodeListConverter.convertToDatabaseValue(trainCodeList));
         }
     }
 
@@ -116,10 +140,12 @@ public class UserConfigModelDao extends AbstractDao<UserConfigModel, Long> {
     public UserConfigModel readEntity(Cursor cursor, int offset) {
         UserConfigModel entity = new UserConfigModel( //
             cursor.getLong(offset + 0), // configId
-            cursor.getString(offset + 1), // fromStation
-            cursor.getString(offset + 2), // toStation
-            cursor.isNull(offset + 3) ? null : stationDateConverter.convertToEntityProperty(cursor.getString(offset + 3)), // stationDate
-            cursor.isNull(offset + 4) ? null : trainCodeListConverter.convertToEntityProperty(cursor.getString(offset + 4)) // trainCodeList
+            cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1), // userName
+            cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2), // userPasswd
+            cursor.getString(offset + 3), // fromStation
+            cursor.getString(offset + 4), // toStation
+            cursor.isNull(offset + 5) ? null : stationDateConverter.convertToEntityProperty(cursor.getString(offset + 5)), // stationDate
+            cursor.isNull(offset + 6) ? null : trainCodeListConverter.convertToEntityProperty(cursor.getString(offset + 6)) // trainCodeList
         );
         return entity;
     }
@@ -127,10 +153,12 @@ public class UserConfigModelDao extends AbstractDao<UserConfigModel, Long> {
     @Override
     public void readEntity(Cursor cursor, UserConfigModel entity, int offset) {
         entity.setConfigId(cursor.getLong(offset + 0));
-        entity.setFromStation(cursor.getString(offset + 1));
-        entity.setToStation(cursor.getString(offset + 2));
-        entity.setStationDate(cursor.isNull(offset + 3) ? null : stationDateConverter.convertToEntityProperty(cursor.getString(offset + 3)));
-        entity.setTrainCodeList(cursor.isNull(offset + 4) ? null : trainCodeListConverter.convertToEntityProperty(cursor.getString(offset + 4)));
+        entity.setUserName(cursor.isNull(offset + 1) ? null : cursor.getString(offset + 1));
+        entity.setUserPasswd(cursor.isNull(offset + 2) ? null : cursor.getString(offset + 2));
+        entity.setFromStation(cursor.getString(offset + 3));
+        entity.setToStation(cursor.getString(offset + 4));
+        entity.setStationDate(cursor.isNull(offset + 5) ? null : stationDateConverter.convertToEntityProperty(cursor.getString(offset + 5)));
+        entity.setTrainCodeList(cursor.isNull(offset + 6) ? null : trainCodeListConverter.convertToEntityProperty(cursor.getString(offset + 6)));
      }
     
     @Override

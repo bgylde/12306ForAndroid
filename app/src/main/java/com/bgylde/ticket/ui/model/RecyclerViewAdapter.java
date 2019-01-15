@@ -10,6 +10,7 @@ import android.widget.TextView;
 
 import com.bgylde.ticket.R;
 import com.bgylde.ticket.request.model.QueryTicketItemModel;
+import com.bgylde.ticket.utils.StringUtils;
 
 import java.util.List;
 
@@ -28,9 +29,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     @Override
     public ViewHolder onCreateViewHolder(@NonNull ViewGroup viewGroup, int viewType) {
         View view = LayoutInflater.from(viewGroup.getContext()).inflate(R.layout.tickets_item, viewGroup, false);
-        ViewHolder viewHolder = new ViewHolder(view);
 
-        return viewHolder;
+        return new ViewHolder(view);
     }
 
     @Override
@@ -38,19 +38,36 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         QueryTicketItemModel model = ticketList.get(position);
 
         viewHolder.stationId.setText(model.getTrainCode());
-        viewHolder.fromStation.setText(model.getFromStation() + "[" + model.getStartTime() + "]");
-        viewHolder.toStation.setText(model.getToStation() + "[" + model.getArrivalTime() + "]");
-        viewHolder.duration.setText(model.getDistanceTime());
-        viewHolder.bussinessSeat.setText(model.getBussinessSeat());
-        viewHolder.superSeat.setText(model.getSuperSeat());
-        viewHolder.firstSeat.setText(model.getFirstSeat());
-        viewHolder.secondSeat.setText(model.getSecondSeat());
-        viewHolder.softSeat.setText(model.getSoftSeat());
-        viewHolder.hardSeat.setText(model.getHardSeat2());
-        viewHolder.hardSeat2.setText(model.getHardSeat2());
-        viewHolder.noSeat.setText(model.getVoidSeat());
-        viewHolder.date.setText(model.getDate());
-        viewHolder.remark.setText("预定");
+        viewHolder.fromStation.setText(StringUtils.formatString("始发站：%s[%s]", model.getFromStation(), model.getStartTime()));
+        viewHolder.toStation.setText(StringUtils.formatString("终到站：%s[%s]", model.getToStation(), model.getArrivalTime()));
+        if ("IS_TIME_NOT_BUY".equals(model.getResult())) {
+            changeViewVisible(viewHolder, View.GONE);
+            viewHolder.bussinessSeat.setTextColor(0xFFAA0000);
+            viewHolder.bussinessSeat.setText("列车运行图调整，暂停发售");
+        } else {
+            changeViewVisible(viewHolder, View.VISIBLE);
+            viewHolder.bussinessSeat.setTextColor(0xFF000000);
+            viewHolder.duration.setText(StringUtils.formatString("%sh", model.getDistanceTime()));
+            viewHolder.bussinessSeat.setText(StringUtils.formatString("商务座：%s", model.getBussinessSeat()));
+            viewHolder.superSeat.setText(StringUtils.formatString("特等座：%s", model.getSuperSeat()));
+            viewHolder.firstSeat.setText(StringUtils.formatString("一等座：%s", model.getFirstSeat()));
+            viewHolder.secondSeat.setText(StringUtils.formatString("二等座：%s" ,model.getSecondSeat()));
+            viewHolder.softSeat.setText(StringUtils.formatString("软卧：%s", model.getSoftSeat()));
+            viewHolder.hardSeat.setText(StringUtils.formatString("硬卧：%s", model.getHardSeat2()));
+            viewHolder.hardSeat2.setText(StringUtils.formatString("硬座：%s", model.getHardSeat2()));
+            viewHolder.noSeat.setText(StringUtils.formatString("无座：%s", model.getVoidSeat()));
+        }
+    }
+
+    private void changeViewVisible(ViewHolder viewHolder, int viewState) {
+        viewHolder.duration.setVisibility(viewState);
+        viewHolder.superSeat.setVisibility(viewState);
+        viewHolder.firstSeat.setVisibility(viewState);
+        viewHolder.secondSeat.setVisibility(viewState);
+        viewHolder.softSeat.setVisibility(viewState);
+        viewHolder.hardSeat.setVisibility(viewState);
+        viewHolder.hardSeat2.setVisibility(viewState);
+        viewHolder.noSeat.setVisibility(viewState);
     }
 
     @Override
@@ -72,8 +89,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         private TextView hardSeat;
         private TextView hardSeat2;
         private TextView noSeat;
-        private TextView date;
-        private Button remark;
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
@@ -89,8 +104,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             hardSeat = itemView.findViewById(R.id.hard_seat);
             hardSeat2 = itemView.findViewById(R.id.hard_seat2);
             noSeat = itemView.findViewById(R.id.no_seat);
-            date = itemView.findViewById(R.id.station_date);
-            remark = itemView.findViewById(R.id.remark);
         }
     }
 }

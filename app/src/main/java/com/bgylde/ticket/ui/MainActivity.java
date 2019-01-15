@@ -20,9 +20,8 @@ import org.greenrobot.eventbus.ThreadMode;
 
 public class MainActivity extends AbstractActivity {
 
-    private Button queryStart;
-    private Button queryPause;
-    private Button queryStop;
+    private Button login;
+    private Button noLogin;
 
     private IdentifyView identifyView;
 
@@ -58,9 +57,8 @@ public class MainActivity extends AbstractActivity {
 
     @Override
     protected void initView() {
-        queryStart = (Button) findViewById(R.id.query_start);
-        queryPause = (Button) findViewById(R.id.query_pause);
-        queryStop = (Button) findViewById(R.id.query_stop);
+        login = (Button) findViewById(R.id.login);
+        noLogin = (Button) findViewById(R.id.no_login);
         identifyView = (IdentifyView) findViewById(R.id.identify_code);
 
         username = (EditText) findViewById(R.id.username);
@@ -69,15 +67,14 @@ public class MainActivity extends AbstractActivity {
 
     @Override
     protected void initListener() {
-        queryStart.setOnClickListener(listener);
-        queryPause.setOnClickListener(listener);
-        queryStop.setOnClickListener(listener);
+        login.setOnClickListener(listener);
+        noLogin.setOnClickListener(listener);
 
         EventBus.getDefault().register(this);
     }
 
     @Subscribe(threadMode = ThreadMode.MAIN)
-    public void onEvent(EventBusCarrier event){
+    public void onEvent(EventBusCarrier event) {
         byte type = event.getEventType();
         Object object = event.getObject();
         switch (type) {
@@ -99,25 +96,28 @@ public class MainActivity extends AbstractActivity {
         }
     }
 
+    private void startQueryActivity() {
+        Intent intent = new Intent();
+        intent.setClass(this, MainQueryActivity.class);
+        startActivity(intent);
+    }
+
 
     private View.OnClickListener listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
             int id = v.getId();
             switch (id) {
-                case R.id.query_start:
+                case R.id.login:
                     ConfigureManager.getInstance().setUsername(username.getText().toString());
                     ConfigureManager.getInstance().setAccountPwd(userpasswd.getText().toString());
 
                     // serviceUtils.startQuery();   该场景下使用startService更好
                     serviceUtils.startService(MainActivity.this);
                     break;
-                case R.id.query_pause:
+                case R.id.no_login:
+                    startQueryActivity();
                     //serviceUtils.pauseQuery();
-                    break;
-                case R.id.query_stop:
-                    serviceUtils.stopService(MainActivity.this);
-                    //serviceUtils.stopQuery();
                     break;
             }
         }
