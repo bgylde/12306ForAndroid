@@ -18,4 +18,14 @@
     <string name="query">查询</string>
 
     <string name="info">信息展示</string>
+
+    <string name="dutaion">"%sh"</string>
+    <string name="bussiness_seat">"商务座：%s"</string>
+    <string name="super_seat">"特等座：%s"</string>
+    <string name="first_seat">一等座：%s</string>
+    <string name="second_seat">二等座：%s</string>
+    <string name="soft_seat">软卧：%s</string>
+    <string name="hard_seat">硬卧：%s</string>
+    <string name="hard_seat2">硬座：%s</string>
+    <string name="no_seat">无座：%s</string>
 </resources>
