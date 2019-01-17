@@ -1,12 +1,9 @@
 package com.bgylde.ticket.http;
 
-import com.bgylde.ticket.database.CookieDbManager;
+import com.bgylde.ticket.database.UserDbManager;
 import com.bgylde.ticket.database.CookieModel;
 import com.bgylde.ticket.utils.LogUtils;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.ObjectInputStream;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
@@ -34,7 +31,7 @@ public class CookiesManager {
             return;
         }
 
-        List<CookieModel> cookieModels = CookieDbManager.getInstance().queryCookieModel();
+        List<CookieModel> cookieModels = UserDbManager.getInstance().queryCookieModel();
         if (cookieModels != null && cookieModels.size() > 0) {
             for (CookieModel model : cookieModels) {
                 LogUtils.d(TAG, "title: " + model.getTitle() + " cookie: " + model.getCookie());
@@ -66,7 +63,7 @@ public class CookiesManager {
                     model.setCookieId(result[0].hashCode());
                     model.setTitle(result[0]);
                     model.setCookie(header);
-                    CookieDbManager.getInstance().insertOrReplace(model);
+                    UserDbManager.getInstance().insertOrReplaceCookie(model);
                 }
             }
         }

@@ -5,9 +5,9 @@ package com.bgylde.ticket.service;
  */
 public interface IPollService {
 
-    void startRequest();
+    // 登录用户
+    void loginAccount(String userName, String passwd);
 
-    void pauseRequest();
-
-    void stopRequest();
+    // 开始抢票
+    void startBuyTickets();
 }

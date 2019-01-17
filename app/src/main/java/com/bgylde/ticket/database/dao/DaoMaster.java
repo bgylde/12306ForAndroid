@@ -23,12 +23,14 @@ public class DaoMaster extends AbstractDaoMaster {
     public static void createAllTables(Database db, boolean ifNotExists) {
         CookieModelDao.createTable(db, ifNotExists);
         UserConfigModelDao.createTable(db, ifNotExists);
+        OrderModelDao.createTable(db, ifNotExists);
     }
 
     /** Drops underlying database table using DAOs. */
     public static void dropAllTables(Database db, boolean ifExists) {
         CookieModelDao.dropTable(db, ifExists);
         UserConfigModelDao.dropTable(db, ifExists);
+        OrderModelDao.dropTable(db, ifExists);
     }
 
     /**
@@ -49,6 +51,7 @@ public class DaoMaster extends AbstractDaoMaster {
         super(db, SCHEMA_VERSION);
         registerDaoClass(CookieModelDao.class);
         registerDaoClass(UserConfigModelDao.class);
+        registerDaoClass(OrderModelDao.class);
     }
 
     public DaoSession newSession() {

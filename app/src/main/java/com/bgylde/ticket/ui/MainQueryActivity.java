@@ -143,6 +143,7 @@ public class MainQueryActivity extends AbstractActivity {
                         return;
                     }
 
+                    ticketItemModels.clear();
                     for (String itemStr : list) {
                         QueryTicketItemModel model = new QueryTicketItemModel(itemStr, data);
                         ticketItemModels.add(model);

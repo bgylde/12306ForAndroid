@@ -4,8 +4,10 @@ import android.content.Context;
 import android.graphics.Bitmap;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.os.Message;
 import android.text.format.DateUtils;
 
+import com.bgylde.ticket.database.UserDbManager;
 import com.bgylde.ticket.request.model.AuthResponse;
 import com.bgylde.ticket.request.model.IdentifyCheckResponse;
 import com.bgylde.ticket.request.model.LoginResponse;
@@ -32,6 +34,15 @@ import static com.bgylde.ticket.ui.model.EventBusCarrier.LOGING_SUCCESSFUL_CODE;
  */
 public class RequestThread extends HandlerThread {
 
+    // 用户账号登录
+    public static final byte USER_ACCOUNT_LOGIN = 1;
+
+    // 开始抢票
+    public static final byte START_BUY_TICKETS = 2;
+
+    // 验证码验证
+    public static final byte IDENTIFY_CHECK = 3;
+
     private static final String TAG = "RequestThread";
 
     private static final long CHECK_USER_STATE_TIME = 2 * DateUtils.MINUTE_IN_MILLIS;
@@ -53,9 +64,11 @@ public class RequestThread extends HandlerThread {
     protected void onLooperPrepared() {
         super.onLooperPrepared();
         if (handler == null) {
-            handler = new Handler(getLooper());
+            handler = new Handler(getLooper(), handlerCallback);
         }
+    }
 
+    private void checkIsLogin() {
         UserCheckResponse response = RequestManaager.getInstance().sendUserCheckRequest(context);
         if (response != null) {
             if (response.getData() != null && response.getData().getFlag()) {
@@ -78,6 +91,8 @@ public class RequestThread extends HandlerThread {
                 LogUtils.w(TAG, "Login!");
                 initQuery();
             }
+        } else {
+            initQuery();
         }
     }
 
@@ -92,7 +107,7 @@ public class RequestThread extends HandlerThread {
             return;
         }
 
-        DialogUtils.showDialog(context, bitmap, handleMessage);
+        DialogUtils.showDialog(context, bitmap, handler);
         // EventBus.getDefault().post(new EventBusCarrier(EventBusCarrier.IDENTIFY_CODE, bitmap));
         AuthResponse authResponse = RequestManaager.getInstance().sendAuthRequest(context);
         if (authResponse == null || authResponse.getResult_code() == 0) {
@@ -100,85 +115,95 @@ public class RequestThread extends HandlerThread {
         }
     }
 
-    public interface HandleMessage {
-        void checkIdentifyCode(String answer);
-    }
-
-    private HandleMessage handleMessage = new HandleMessage() {
+    private Handler.Callback handlerCallback = new Handler.Callback() {
         @Override
-        public void checkIdentifyCode(final String answer) {
-            handler.post(new Runnable() {
-                @Override
-                public void run() {
-                    IdentifyCheckResponse res =
-                            RequestManaager.getInstance().sendIdentifyCheckRequest(context, answer);
-                    if (res != null && "4".equals(res.getResult_code())) {
-                        LoginResponse loginResponse = RequestManaager.getInstance().
-                                sendUserLogin(context, ConfigureManager.getInstance().getAccountUser(),
-                                        ConfigureManager.getInstance().getAccountPwd());
-                        if (loginResponse != null && loginResponse.getResult_code() == 0) {
-                            // 登录成功
-                            AuthResponse authResponse = RequestManaager.getInstance().sendAuthRequest(context);
-                            if (authResponse == null) {
-                                return;
-                            }
+        public boolean handleMessage(Message msg) {
+            switch (msg.what) {
+                case USER_ACCOUNT_LOGIN:
+                    checkIsLogin();
+                    break;
+                case IDENTIFY_CHECK:
+                    identifyCodeCheck((String)msg.obj, ConfigureManager.getInstance().getAccountUser(),
+                            ConfigureManager.getInstance().getAccountPwd());
+                    break;
+                default:
+                    return false;
+            }
 
-                            UserInfoResponse userInfoResponse = RequestManaager.getInstance().sendUserInfoRequest(context, authResponse.getNewapptk());
-                            if (userInfoResponse == null || userInfoResponse.getResult_code() != 0) {
-                                LogUtils.w(TAG, "User login error!");
-                                return;
-                            }
-
-                            LogUtils.i(TAG, "Welcome user[" + userInfoResponse.getUsername() + "] login.");
-                            EventBus.getDefault().post(new EventBusCarrier(LOGING_SUCCESSFUL_CODE, userInfoResponse));
-
-                            //queryTicket();
-                        }
-                    } else {
-                        Bitmap bitmap = RequestManaager.getInstance().sendIdentifyCodeRequest(context);
-                        if (bitmap == null) {
-                            return;
-                        }
-
-                        // EventBus.getDefault().post(new EventBusCarrier(EventBusCarrier.IDENTIFY_CODE, bitmap));
-                        DialogUtils.showDialog(context, bitmap, handleMessage);
-                    }
-                }
-            });
+            return true;
         }
     };
 
-    private void queryTicket() {
-        while(!isDestory) {
-            if (System.currentTimeMillis() - lastCheckTime > CHECK_USER_STATE_TIME) {
-                UserCheckResponse response = RequestManaager.getInstance().sendUserCheckRequest(context);
-                if (response != null) {
-                    if (response.getData() != null && response.getData().getFlag()) {
-                        lastCheckTime = System.currentTimeMillis();
-                    } else {
-                        LogUtils.w(TAG, "ReLogin!");
-                        initQuery();
-                    }
+    private void identifyCodeCheck(String answer, String userName, String passwd) {
+        IdentifyCheckResponse res =
+                RequestManaager.getInstance().sendIdentifyCheckRequest(context, answer);
+        if (res != null && "4".equals(res.getResult_code())) {
+            LoginResponse loginResponse = RequestManaager.getInstance().sendUserLogin(context, userName, passwd);
+            if (loginResponse != null && loginResponse.getResult_code() == 0) {
+                // 登录成功
+                AuthResponse authResponse = RequestManaager.getInstance().sendAuthRequest(context);
+                if (authResponse == null) {
+                    return;
                 }
-            }
 
-            QueryTicketsResponse response = RequestManaager.getInstance().sendQueryTicketsAnsyc(context, "2019-02-01", "BXP", "TNV");
-            if (response != null) {
-                List<String> list = response.getData().getResult();
-                for (String itemStr : list) {
-                    QueryTicketItemModel model = new QueryTicketItemModel(itemStr, "2019-02-01");
-                    if (model.getResult().equals("Y") && model.getStatus().equals("预定")) {
-
-                    }
+                UserInfoResponse userInfoResponse = RequestManaager.getInstance().sendUserInfoRequest(context, authResponse.getNewapptk());
+                if (userInfoResponse == null || userInfoResponse.getResult_code() != 0) {
+                    LogUtils.w(TAG, "User login error!");
+                    return;
                 }
+
+                UserDbManager.getInstance().insertOrReplaceUser(userName, passwd);
+                LogUtils.i(TAG, "Welcome user[" + userInfoResponse.getUsername() + "] login.");
+                EventBus.getDefault().post(new EventBusCarrier(LOGING_SUCCESSFUL_CODE, userInfoResponse));
+
+                //queryTicket();
+            }
+        } else {
+            Bitmap bitmap = RequestManaager.getInstance().sendIdentifyCodeRequest(context);
+            if (bitmap == null) {
+                return;
             }
 
-            try {
-                Thread.sleep(5000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-
+            // EventBus.getDefault().post(new EventBusCarrier(EventBusCarrier.IDENTIFY_CODE, bitmap));
+            DialogUtils.showDialog(context, bitmap, handler);
         }
     }
+
+    public Handler getHandler() {
+        return handler;
+    }
+
+//    private void queryTicket() {
+//        while(!isDestory) {
+//            if (System.currentTimeMillis() - lastCheckTime > CHECK_USER_STATE_TIME) {
+//                UserCheckResponse response = RequestManaager.getInstance().sendUserCheckRequest(context);
+//                if (response != null) {
+//                    if (response.getData() != null && response.getData().getFlag()) {
+//                        lastCheckTime = System.currentTimeMillis();
+//                    } else {
+//                        LogUtils.w(TAG, "ReLogin!");
+//                        initQuery();
+//                    }
+//                }
+//            }
+//
+//            QueryTicketsResponse response = RequestManaager.getInstance().sendQueryTicketsAnsyc(context, "2019-02-01", "BXP", "TNV");
+//            if (response != null) {
+//                List<String> list = response.getData().getResult();
+//                for (String itemStr : list) {
+//                    QueryTicketItemModel model = new QueryTicketItemModel(itemStr, "2019-02-01");
+//                    if (model.getResult().equals("Y") && model.getStatus().equals("预定")) {
+//
+//                    }
+//                }
+//            }
+//
+//            try {
+//                Thread.sleep(5000);
+//            } catch (InterruptedException e) {
+//                e.printStackTrace();
+//            }
+//
+//        }
+//    }
 }

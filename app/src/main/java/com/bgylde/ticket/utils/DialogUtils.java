@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.os.Build;
 import android.os.Handler;
 import android.os.Looper;
+import android.os.Message;
 import android.provider.Settings;
 import android.view.View;
 import android.view.WindowManager;
@@ -28,16 +29,16 @@ public class DialogUtils {
 
     private static final String TAG = "DialogUtils";
 
-    public static void showDialog(final Context context, final Bitmap bitmap, final RequestThread.HandleMessage handleMessage) {
+    public static void showDialog(final Context context, final Bitmap bitmap, final Handler handler) {
         runInUiThread(new Runnable() {
             @Override
             public void run() {
-                requestPermission(context, bitmap, handleMessage);
+                requestPermission(context, bitmap, handler);
             }
         });
     }
 
-    private static void readShowDialog(final Context context, Bitmap bitmap, final RequestThread.HandleMessage handleMessage) {
+    private static void readShowDialog(final Context context, Bitmap bitmap, final Handler handleMessage) {
         View view = View.inflate(context, R.layout.identify_code, null);
         final IdentifyView imageView = view.findViewById(R.id.dialog_identify_code);
         imageView.setImageBitmap(bitmap);
@@ -52,7 +53,11 @@ public class DialogUtils {
         okButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                handleMessage.checkIdentifyCode(imageView.getIdentifyPoint());
+                Message msg = handleMessage.obtainMessage();
+                msg.what = RequestThread.IDENTIFY_CHECK;
+                msg.obj = imageView.getIdentifyPoint();
+                handleMessage.sendMessage(msg);
+                // handleMessage.checkIdentifyCode(imageView.getIdentifyPoint());
                 dialog.dismiss();
             }
         });
@@ -67,7 +72,7 @@ public class DialogUtils {
         dialog.show();
     }
 
-    private static void requestPermission(Context context, Bitmap bitmap, RequestThread.HandleMessage handleMessage) {
+    private static void requestPermission(Context context, Bitmap bitmap, Handler handleMessage) {
         if (Build.VERSION.SDK_INT >= 23) {
             if (!Settings.canDrawOverlays(context)) {
                 Intent intent = new Intent(Settings.ACTION_MANAGE_OVERLAY_PERMISSION);

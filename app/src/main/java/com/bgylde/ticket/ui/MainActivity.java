@@ -8,6 +8,8 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.bgylde.ticket.R;
+import com.bgylde.ticket.database.UserConfigModel;
+import com.bgylde.ticket.database.UserDbManager;
 import com.bgylde.ticket.request.model.UserInfoResponse;
 import com.bgylde.ticket.service.ServiceManager;
 import com.bgylde.ticket.ui.model.EventBusCarrier;
@@ -41,6 +43,10 @@ public class MainActivity extends AbstractActivity {
         super.onResume();
         serviceUtils = new ServiceManager();
         serviceUtils.bindService(this);
+
+        UserConfigModel model = UserDbManager.getInstance().queryUserInfo();
+        username.setText(model.getUserName());
+        userpasswd.setText(model.getUserPasswd());
     }
 
     @Override
@@ -109,15 +115,10 @@ public class MainActivity extends AbstractActivity {
             int id = v.getId();
             switch (id) {
                 case R.id.login:
-                    ConfigureManager.getInstance().setUsername(username.getText().toString());
-                    ConfigureManager.getInstance().setAccountPwd(userpasswd.getText().toString());
-
-                    // serviceUtils.startQuery();   该场景下使用startService更好
-                    serviceUtils.startService(MainActivity.this);
+                    serviceUtils.login(username.getText().toString(), userpasswd.getText().toString());
                     break;
                 case R.id.no_login:
                     startQueryActivity();
-                    //serviceUtils.pauseQuery();
                     break;
             }
         }

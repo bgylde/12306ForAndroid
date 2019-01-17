@@ -15,7 +15,6 @@ public class ServiceManager {
 
     private IPollService pollService;
 
-    @Deprecated
     public void bindService(Context context) {
         if (context == null) {
             return;
@@ -25,7 +24,6 @@ public class ServiceManager {
         context.getApplicationContext().bindService(new Intent(context, PollService.class), serviceConnection, Context.BIND_AUTO_CREATE);
     }
 
-    @Deprecated
     public void unBindService(Context context) {
         if (context == null) {
             return;
@@ -51,7 +49,6 @@ public class ServiceManager {
         }
     }
 
-    @Deprecated
     public void stopService(Context context) {
         if (context == null) {
             return;
@@ -61,28 +58,18 @@ public class ServiceManager {
         context.getApplicationContext().stopService(intent);
     }
 
-    @Deprecated
-    public void startQuery() {
+    public void startBuyTickets() {
         if (pollService != null) {
-            pollService.startRequest();
+            pollService.startBuyTickets();
         }
     }
 
-    @Deprecated
-    public void pauseQuery() {
+    public void login(String username, String passwd) {
         if (pollService != null) {
-            pollService.pauseRequest();
+            pollService.loginAccount(username, passwd);
         }
     }
 
-    @Deprecated
-    public void stopQuery() {
-        if (pollService != null) {
-            pollService.stopRequest();
-        }
-    }
-
-    @Deprecated
     private class ServiceConnection implements android.content.ServiceConnection {
 
         @Override
