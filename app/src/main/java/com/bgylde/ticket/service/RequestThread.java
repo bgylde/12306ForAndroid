@@ -17,6 +17,7 @@ import com.bgylde.ticket.request.model.UserCheckResponse;
 import com.bgylde.ticket.request.model.UserInfoResponse;
 import com.bgylde.ticket.request.utils.RequestManaager;
 import com.bgylde.ticket.ui.model.EventBusCarrier;
+import com.bgylde.ticket.utils.ConfigPreference;
 import com.bgylde.ticket.utils.ConfigureManager;
 import com.bgylde.ticket.utils.DialogUtils;
 import com.bgylde.ticket.utils.LogUtils;
@@ -152,7 +153,7 @@ public class RequestThread extends HandlerThread {
                     return;
                 }
 
-                UserDbManager.getInstance().insertOrReplaceUser(userName, passwd);
+                ConfigPreference.updateUserInfo(context, userName, passwd);
                 LogUtils.i(TAG, "Welcome user[" + userInfoResponse.getUsername() + "] login.");
                 EventBus.getDefault().post(new EventBusCarrier(LOGING_SUCCESSFUL_CODE, userInfoResponse));
 

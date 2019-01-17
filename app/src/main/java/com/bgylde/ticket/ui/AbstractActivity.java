@@ -11,13 +11,17 @@ import android.view.WindowManager;
  */
 public abstract class AbstractActivity extends FragmentActivity {
 
+    protected Window window;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        window = getWindow();
         //去除标题栏
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         //去除状态栏
-        getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+        window.setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 
         setContentView(getContentLayout());
 

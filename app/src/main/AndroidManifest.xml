@@ -32,7 +32,6 @@
 
         <service
             android:name=".service.PollService" />
-        <service android:name=".service.RequestService" />
     </application>
 
 </manifest>

@@ -8,12 +8,10 @@ import android.widget.Button;
 import android.widget.EditText;
 
 import com.bgylde.ticket.R;
-import com.bgylde.ticket.database.UserConfigModel;
-import com.bgylde.ticket.database.UserDbManager;
 import com.bgylde.ticket.request.model.UserInfoResponse;
 import com.bgylde.ticket.service.ServiceManager;
 import com.bgylde.ticket.ui.model.EventBusCarrier;
-import com.bgylde.ticket.utils.ConfigureManager;
+import com.bgylde.ticket.utils.ConfigPreference;
 import com.bgylde.ticket.utils.DialogUtils;
 
 import org.greenrobot.eventbus.EventBus;
@@ -44,9 +42,9 @@ public class MainActivity extends AbstractActivity {
         serviceUtils = new ServiceManager();
         serviceUtils.bindService(this);
 
-        UserConfigModel model = UserDbManager.getInstance().queryUserInfo();
-        username.setText(model.getUserName());
-        userpasswd.setText(model.getUserPasswd());
+        ConfigPreference configPreference = new ConfigPreference(this);
+        username.setText(configPreference.getUsername());
+        userpasswd.setText(configPreference.getUserPasswd());
     }
 
     @Override

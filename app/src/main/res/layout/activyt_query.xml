@@ -1,130 +1,158 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<android.support.v4.widget.DrawerLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/drawer_layout"
     android:layout_width="match_parent"
     android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/user"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_centerHorizontal="true"
-        android:layout_marginTop="16dp"
-        android:includeFontPadding="false"
-        android:textSize="22sp"/>
-
-    <View
-        android:id="@+id/line"
+    <RelativeLayout
+        android:id="@+id/main_layout"
         android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@id/user"
-        android:layout_marginTop="5dp"
-        android:background="#000000"/>
+        android:layout_height="match_parent">
 
-    <TextView
-        android:id="@+id/from_station_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/from_station_text"
-        android:layout_below="@id/line"
-        android:layout_marginTop="5dp"
-        android:textSize="16sp"/>
-
-    <EditText
-        android:id="@+id/from_station_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/from_station_text"
-        android:layout_toRightOf="@id/from_station_text"
-        android:textSize="16sp"/>
-
-    <TextView
-        android:id="@+id/to_station_text"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/to_station_text"
-        android:layout_below="@id/from_station_text"
-        android:layout_marginTop="5dp"
-        android:textSize="16sp"/>
-
-    <EditText
-        android:id="@+id/to_station_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/to_station_text"
-        android:layout_toRightOf="@id/to_station_text"
-        android:textSize="16sp"/>
-
-    <TextView
-        android:id="@+id/order_date"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="@string/order_date"
-        android:layout_below="@id/to_station_text"
-        android:layout_marginTop="5dp"
-        android:textSize="16sp"/>
-
-    <EditText
-        android:id="@+id/order_date_input"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_alignBaseline="@id/order_date"
-        android:layout_toRightOf="@id/order_date"
-        android:textSize="16sp"/>
-
-    <LinearLayout
-        android:id="@+id/button_layout"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/order_date"
-        android:layout_marginTop="5dp"
-        android:weightSum="2"
-        android:orientation="horizontal">
-
-        <Button
-            android:id="@+id/query"
+        <TextView
+            android:id="@+id/user"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/query"
-            android:focusable="true"
-            android:textSize="16sp"/>
+            android:layout_centerHorizontal="true"
+            android:layout_marginTop="16dp"
+            android:includeFontPadding="false"
+            android:textSize="22sp"/>
 
-        <Button
-            android:id="@+id/quert_start"
+        <View
+            android:id="@+id/line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/user"
+            android:layout_marginTop="5dp"
+            android:background="#000000"/>
+
+        <TextView
+            android:id="@+id/from_station_text"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_weight="1"
-            android:text="@string/query_start"
+            android:text="@string/from_station_text"
+            android:layout_below="@id/line"
+            android:layout_marginTop="5dp"
             android:textSize="16sp"/>
-    </LinearLayout>
+
+        <EditText
+            android:id="@+id/from_station_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/from_station_text"
+            android:layout_toRightOf="@id/from_station_text"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/to_station_text"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/to_station_text"
+            android:layout_below="@id/from_station_text"
+            android:layout_marginTop="5dp"
+            android:textSize="16sp"/>
+
+        <EditText
+            android:id="@+id/to_station_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/to_station_text"
+            android:layout_toRightOf="@id/to_station_text"
+            android:textSize="16sp"/>
+
+        <TextView
+            android:id="@+id/order_date"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/order_date"
+            android:layout_below="@id/to_station_text"
+            android:layout_marginTop="5dp"
+            android:textSize="16sp"/>
+
+        <EditText
+            android:id="@+id/order_date_input"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignBaseline="@id/order_date"
+            android:layout_toRightOf="@id/order_date"
+            android:textSize="16sp"/>
+
+        <LinearLayout
+            android:id="@+id/button_layout"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/order_date"
+            android:layout_marginTop="5dp"
+            android:weightSum="2"
+            android:orientation="horizontal">
+
+            <Button
+                android:id="@+id/query"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/query"
+                android:focusable="true"
+                android:textSize="16sp"/>
+
+            <Button
+                android:id="@+id/quert_start"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:text="@string/query_start"
+                android:textSize="16sp"/>
+        </LinearLayout>
 
 
-    <TextView
-        android:id="@+id/process_info"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:layout_below="@id/button_layout"
-        android:layout_marginTop="10dp"
-        android:gravity="center"
-        android:textSize="16sp"
-        android:text="@string/info"/>
+        <TextView
+            android:id="@+id/process_info"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_below="@id/button_layout"
+            android:layout_marginTop="10dp"
+            android:gravity="center"
+            android:textSize="16sp"
+            android:text="@string/info"/>
 
-    <View
-        android:id="@+id/single_line"
-        android:layout_width="match_parent"
-        android:layout_height="1dp"
-        android:layout_below="@id/process_info"
-        android:layout_marginTop="5dp"
-        android:background="#000000"/>
+        <View
+            android:id="@+id/single_line"
+            android:layout_width="match_parent"
+            android:layout_height="1dp"
+            android:layout_below="@id/process_info"
+            android:layout_marginTop="5dp"
+            android:background="#000000"/>
 
-    <android.support.v7.widget.RecyclerView
-        android:id="@+id/ticket_list"
-        android:layout_width="match_parent"
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/ticket_list"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_below="@id/single_line">
+
+        </android.support.v7.widget.RecyclerView>
+
+        <Button
+            android:id="@+id/market"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentRight="true"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="36dp"
+            android:layout_marginRight="36dp"
+            android:textSize="18sp"
+            android:text="购物车"/>
+    </RelativeLayout>
+
+    <ListView
+        android:id="@+id/market_tickets"
+        android:layout_width="240dp"
         android:layout_height="match_parent"
-        android:layout_below="@id/single_line">
-
-    </android.support.v7.widget.RecyclerView>
-
-</RelativeLayout>
+        android:layout_gravity="end"
+        android:choiceMode="singleChoice"
+        android:divider="#FF63A219"
+        android:dividerHeight="1dp"
+        android:background="#FFEEEEEE"
+        android:scrollbars="none"/>
+</android.support.v4.widget.DrawerLayout>

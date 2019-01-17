@@ -57,26 +57,4 @@ public class UserDbManager {
     public List<CookieModel> queryCookieModel() {
         return daoSession.getCookieModelDao().queryBuilder().list();
     }
-
-    public void insertOrReplaceUser(String username, String passwd) {
-        UserConfigModel model = new UserConfigModel();
-        model.setUserId(UserConfigModel.USER_UNIQUE_ID);
-        model.setUserName(username);
-        model.setUserPasswd(passwd);
-        daoSession.getUserConfigModelDao().insertOrReplace(model);
-    }
-
-    public UserConfigModel queryUserInfo() {
-        List<UserConfigModel> userModels = daoSession.getUserConfigModelDao().queryBuilder().list();
-        UserConfigModel userModel = new UserConfigModel();
-        if (userModels != null && userModels.size() > 0) {
-            for (UserConfigModel model : userModels) {
-                userModel.setUserName(model.getUserName());
-                userModel.setUserPasswd(model.getUserPasswd());
-                break;
-            }
-        }
-
-        return userModel;
-    }
 }

@@ -8,6 +8,7 @@ import android.os.Message;
 import android.support.annotation.Nullable;
 
 import com.bgylde.ticket.http.CookiesManager;
+import com.bgylde.ticket.utils.ConfigPreference;
 import com.bgylde.ticket.utils.ConfigureManager;
 import com.bgylde.ticket.utils.LogUtils;
 
@@ -26,7 +27,6 @@ public class PollService extends Service {
     public void onCreate() {
         super.onCreate();
         CookiesManager.getInstance().initDbCookie();
-        LogUtils.d("wy", "1 !!!!!!!!!!!!!!!!!!1");
         startQueryThread();
     }
 
@@ -66,6 +66,7 @@ public class PollService extends Service {
         public void loginAccount(String userName, String passwd) {
             ConfigureManager.getInstance().setUsername(userName);
             ConfigureManager.getInstance().setAccountPwd(passwd);
+            ConfigPreference.updateUserInfo(PollService.this, userName, passwd);
             if (requestHandler != null) {
                 requestHandler.sendEmptyMessage(RequestThread.USER_ACCOUNT_LOGIN);
             } else {

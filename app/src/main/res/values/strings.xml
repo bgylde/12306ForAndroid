@@ -18,6 +18,7 @@
     <string name="query">查询</string>
 
     <string name="info">信息展示</string>
+    <string name="query_fail_info">查询为空，可能IP被封，请重试！</string>
 
     <string name="dutaion">"%sh"</string>
     <string name="bussiness_seat">"商务座：%s"</string>

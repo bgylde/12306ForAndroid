@@ -1,16 +1,16 @@
 package com.bgylde.ticket.ui.model;
 
-import android.content.res.Resources;
 import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
+import android.view.MotionEvent;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.Button;
 import android.widget.TextView;
 
 import com.bgylde.ticket.R;
 import com.bgylde.ticket.request.model.QueryTicketItemModel;
+import com.bgylde.ticket.ui.MainQueryActivity;
 import com.bgylde.ticket.utils.StringUtils;
 
 import java.util.List;
@@ -21,6 +21,8 @@ import java.util.List;
 public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapter.ViewHolder> {
 
     private List<QueryTicketItemModel> ticketList;
+
+    private MainQueryActivity.ItemClickListener itemClickListener;
 
     public RecyclerViewAdapter(List<QueryTicketItemModel> ticketList) {
         this.ticketList = ticketList;
@@ -35,8 +37,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder viewHolder, int position) {
-        QueryTicketItemModel model = ticketList.get(position);
+    public void onBindViewHolder(@NonNull final ViewHolder viewHolder, final int position) {
+        QueryTicketItemModel model = ticketList.get(viewHolder.getAdapterPosition());
 
         viewHolder.stationId.setText(model.getTrainCode());
         viewHolder.fromStation.setText(StringUtils.formatString("始发站：%s[%s]", model.getFromStation(), model.getStartTime()));
@@ -58,6 +60,20 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             setSeatInfo(viewHolder.hardSeat, R.string.hard_seat, model.getHardSeat2());
             setSeatInfo(viewHolder.hardSeat2, R.string.hard_seat2, model.getHardSeat2());
             setSeatInfo(viewHolder.noSeat, R.string.no_seat, model.getVoidSeat());
+            viewHolder.layout.setOnTouchListener(new View.OnTouchListener() {
+                @Override
+                public boolean onTouch(View v, MotionEvent event) {
+                    switch (event.getAction()) {
+                        case MotionEvent.ACTION_UP:
+                            if (itemClickListener != null) {
+                                itemClickListener.onClick(viewHolder.getAdapterPosition(), event.getRawX(), event.getRawY());
+                            }
+                            break;
+                    }
+
+                    return true;
+                }
+            });
         }
     }
 
@@ -86,8 +102,13 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         return ticketList.size();
     }
 
+    public void setOnItemClickListener(MainQueryActivity.ItemClickListener clickListener) {
+        this.itemClickListener = clickListener;
+    }
+
     class ViewHolder extends RecyclerView.ViewHolder {
 
+        private View layout;
         private TextView stationId;
         private TextView fromStation;
         private TextView toStation;
@@ -103,6 +124,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
 
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
+            layout = itemView.findViewById(R.id.ticket_layout);
             stationId = itemView.findViewById(R.id.station_id);
             fromStation = itemView.findViewById(R.id.from_station);
             toStation = itemView.findViewById(R.id.to_station);
