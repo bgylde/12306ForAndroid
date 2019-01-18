@@ -47,6 +47,8 @@ public class QueryTicketItemModel {
 
     private String date;
 
+    private boolean isSelect = false;
+
     public QueryTicketItemModel(String str, String date) {
         String[] list = str.split("\\|");
         secretSrt = list[1];
@@ -230,5 +232,13 @@ public class QueryTicketItemModel {
 
     public void setDate(String date) {
         this.date = date;
+    }
+
+    public void setSelect(boolean select) {
+        isSelect = select;
+    }
+
+    public boolean isSelect() {
+        return isSelect;
     }
 }

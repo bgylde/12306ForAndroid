@@ -74,7 +74,7 @@ public class MainQueryActivity extends AbstractActivity {
     private ListView drawerListView;
     private DrawerAdapter drawerAdapter;
     private DrawerLayout drawerLayout;
-    private List<DrawerAdapter.ViewHolderItem> drawerList;
+    private List<QueryTicketItemModel> drawerList;
 
     private int pointCount = 0;
     private FrameLayout viewGroup;
@@ -132,20 +132,12 @@ public class MainQueryActivity extends AbstractActivity {
             public void onClickItem(int position) {
                 LogUtils.d("wy", "click item: " + position);
                 drawerList.remove(position);
+                ticketItemModels.get(position).setSelect(false);
                 drawerAdapter.notifyDataSetChanged();
-//                drawerListView.removeViewAt(position);
             }
         });
         drawerListView.setAdapter(drawerAdapter);
-//        drawerLayout.setDrawerListener(drawerListener);
-//        drawerListView.setOnItemClickListener(new AdapterView.OnItemClickListener() {
-//            @Override
-//            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-//                LogUtils.d("wy", "click item: " + position);
-//                drawerList.remove(position);
-//                drawerListView.removeViewAt(position);
-//            }
-//        });
+        drawerLayout.setDrawerListener(drawerListener);
 
         LinearLayoutManager manager = new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false);
         DividerItemDecoration itemDecoration = new DividerItemDecoration(this, manager.getOrientation());
@@ -182,8 +174,10 @@ public class MainQueryActivity extends AbstractActivity {
                 case R.id.quert_start:
                     break;
                 case R.id.market:
-                    drawerAdapter.notifyDataSetChanged();
-                    drawerLayout.openDrawer(drawerListView);
+                    if (drawerList.size() > 0) {
+                        drawerAdapter.notifyDataSetChanged();
+                        drawerLayout.openDrawer(drawerListView);
+                    }
                     break;
             }
         }
@@ -230,9 +224,10 @@ public class MainQueryActivity extends AbstractActivity {
     private ItemClickListener itemClickListener = new ItemClickListener() {
         @Override
         public void onClick(int position, float rawX, float rawY) {
-            DrawerAdapter.ViewHolderItem viewHolderItem = new DrawerAdapter.ViewHolderItem(ticketItemModels.get(position));
-            if (!drawerList.contains(viewHolderItem)) {
-                drawerList.add(viewHolderItem);
+            ticketItemModels.get(position).setSelect(true);
+            adapter.notifyItemChanged(position);
+            if (!drawerList.contains(ticketItemModels.get(position))) {
+                drawerList.add(ticketItemModels.get(position));
                 startClickAnimation((int)rawX, (int)rawY);
             }
         }
@@ -292,7 +287,6 @@ public class MainQueryActivity extends AbstractActivity {
         view.startAnimation(animatorSet);
     }
 
-
     private FrameLayout createAnimationLayout() {
         ViewGroup rootView = (ViewGroup) window.getDecorView();
         FrameLayout animationLayout = new FrameLayout(this);
@@ -315,27 +309,24 @@ public class MainQueryActivity extends AbstractActivity {
         return view;
     }
 
+    private DrawerLayout.DrawerListener drawerListener = new DrawerLayout.DrawerListener() {
+        @Override
+        public void onDrawerSlide(@NonNull View view, float v) {
 
+        }
 
-    //    private DrawerLayout.DrawerListener drawerListener = new DrawerLayout.DrawerListener() {
-//        @Override
-//        public void onDrawerSlide(@NonNull View view, float v) {
-//
-//        }
-//
-//        @Override
-//        public void onDrawerOpened(@NonNull View view) {
-//            drawerAdapter.notifyDataSetChanged();
-//        }
-//
-//        @Override
-//        public void onDrawerClosed(@NonNull View view) {
-//
-//        }
-//
-//        @Override
-//        public void onDrawerStateChanged(int i) {
-//
-//        }
-//    };
+        @Override
+        public void onDrawerOpened(@NonNull View view) {
+        }
+
+        @Override
+        public void onDrawerClosed(@NonNull View view) {
+            adapter.notifyDataSetChanged();
+        }
+
+        @Override
+        public void onDrawerStateChanged(int i) {
+
+        }
+    };
 }

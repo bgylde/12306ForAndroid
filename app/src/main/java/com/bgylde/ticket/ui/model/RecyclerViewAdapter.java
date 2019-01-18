@@ -11,6 +11,7 @@ import android.widget.TextView;
 import com.bgylde.ticket.R;
 import com.bgylde.ticket.request.model.QueryTicketItemModel;
 import com.bgylde.ticket.ui.MainQueryActivity;
+import com.bgylde.ticket.utils.LogUtils;
 import com.bgylde.ticket.utils.StringUtils;
 
 import java.util.List;
@@ -47,6 +48,7 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             changeViewVisible(viewHolder, View.GONE);
             viewHolder.bussinessSeat.setTextColor(0xFFAA0000);
             viewHolder.bussinessSeat.setText(model.getStatus());
+            viewHolder.layout.setOnTouchListener(null);
         } else {
             changeViewVisible(viewHolder, View.VISIBLE);
             viewHolder.bussinessSeat.setTextColor(0xFF000000);
@@ -60,20 +62,27 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             setSeatInfo(viewHolder.hardSeat, R.string.hard_seat, model.getHardSeat2());
             setSeatInfo(viewHolder.hardSeat2, R.string.hard_seat2, model.getHardSeat2());
             setSeatInfo(viewHolder.noSeat, R.string.no_seat, model.getVoidSeat());
-            viewHolder.layout.setOnTouchListener(new View.OnTouchListener() {
-                @Override
-                public boolean onTouch(View v, MotionEvent event) {
-                    switch (event.getAction()) {
-                        case MotionEvent.ACTION_UP:
-                            if (itemClickListener != null) {
-                                itemClickListener.onClick(viewHolder.getAdapterPosition(), event.getRawX(), event.getRawY());
-                            }
-                            break;
-                    }
+            LogUtils.d("wy", "isSelect: " + model.isSelect());
+            if (model.isSelect()) {
+                viewHolder.layout.setBackgroundColor(0x66AA9988);
+                viewHolder.layout.setOnTouchListener(null);
+            } else {
+                viewHolder.layout.setBackgroundColor(0xFFFFFFFF);
+                viewHolder.layout.setOnTouchListener(new View.OnTouchListener() {
+                    @Override
+                    public boolean onTouch(View v, MotionEvent event) {
+                        switch (event.getAction()) {
+                            case MotionEvent.ACTION_UP:
+                                if (itemClickListener != null) {
+                                    itemClickListener.onClick(viewHolder.getAdapterPosition(), event.getRawX(), event.getRawY());
+                                }
+                                break;
+                        }
 
-                    return true;
-                }
-            });
+                        return true;
+                    }
+                });
+            }
         }
     }
 

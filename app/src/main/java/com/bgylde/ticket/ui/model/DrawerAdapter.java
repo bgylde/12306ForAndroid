@@ -19,10 +19,10 @@ import java.util.List;
 public class DrawerAdapter extends BaseAdapter {
 
     private Context context;
-    private List<ViewHolderItem> itemList;
+    private List<QueryTicketItemModel> itemList;
     private ItemClickListener itemClickListener;
 
-    public DrawerAdapter(Context context, List<ViewHolderItem> itemList) {
+    public DrawerAdapter(Context context, List<QueryTicketItemModel> itemList) {
         this.context = context;
         this.itemList = itemList;
     }
@@ -33,7 +33,7 @@ public class DrawerAdapter extends BaseAdapter {
     }
 
     @Override
-    public ViewHolderItem getItem(int position) {
+    public QueryTicketItemModel getItem(int position) {
         return itemList.get(position);
     }
 
@@ -59,13 +59,13 @@ public class DrawerAdapter extends BaseAdapter {
             });
         }
 
-        setTextString(view, R.id.train_date, itemList.get(position).trainDate);
-        setTextString(view, R.id.start_time, itemList.get(position).startTime);
-        setTextString(view, R.id.end_time, itemList.get(position).endTime);
-        setTextString(view, R.id.from_station, itemList.get(position).fromStation);
-        setTextString(view, R.id.to_station, itemList.get(position).toStation);
-        setTextString(view, R.id.cost_time, itemList.get(position).costTime);
-        setTextString(view, R.id.train_code, itemList.get(position).trainCode);
+        setTextString(view, R.id.train_date, itemList.get(position).getDate());
+        setTextString(view, R.id.start_time, itemList.get(position).getStartTime());
+        setTextString(view, R.id.end_time, itemList.get(position).getArrivalTime());
+        setTextString(view, R.id.from_station, itemList.get(position).getFromStation());
+        setTextString(view, R.id.to_station, itemList.get(position).getToStation());
+        setTextString(view, R.id.cost_time, itemList.get(position).getDistanceTime());
+        setTextString(view, R.id.train_code, itemList.get(position).getTrainCode());
 
         return view;
     }
@@ -80,39 +80,5 @@ public class DrawerAdapter extends BaseAdapter {
 
     public interface ItemClickListener {
         void onClickItem(int position);
-    }
-
-    public static class ViewHolderItem {
-        private String trainCode;
-        private String trainDate;
-        private String startTime;
-        private String endTime;
-        private String fromStation;
-        private String toStation;
-        private String costTime;
-
-        public ViewHolderItem(QueryTicketItemModel ticketInfo) {
-            this.trainCode = ticketInfo.getTrainCode();
-            this.trainDate = ticketInfo.getDate();
-            this.startTime = ticketInfo.getStartTime();
-            this.endTime = ticketInfo.getArrivalTime();
-            this.fromStation = ticketInfo.getFromStation();
-            this.toStation = ticketInfo.getToStation();
-            this.costTime = ticketInfo.getDistanceTime();
-        }
-
-        @Override
-        public boolean equals(Object obj) {
-            if (obj == null || obj.getClass() != ViewHolderItem.class) {
-                return false;
-            }
-
-            if (this.trainCode.equals(((ViewHolderItem)obj).trainCode)
-                    && this.trainDate.equals(((ViewHolderItem)obj).trainDate)) {
-                return true;
-            }
-
-            return false;
-        }
     }
 }
