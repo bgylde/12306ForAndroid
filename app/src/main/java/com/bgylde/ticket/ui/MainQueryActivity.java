@@ -31,6 +31,7 @@ import android.widget.TextView;
 
 import com.bgylde.ticket.MainApplication;
 import com.bgylde.ticket.R;
+import com.bgylde.ticket.database.UserDbManager;
 import com.bgylde.ticket.request.model.QueryTicketItemModel;
 import com.bgylde.ticket.request.model.QueryTicketsResponse;
 import com.bgylde.ticket.request.utils.RequestManaager;
@@ -130,7 +131,6 @@ public class MainQueryActivity extends AbstractActivity {
         drawerAdapter.setItemClickListener(new DrawerAdapter.ItemClickListener() {
             @Override
             public void onClickItem(int position) {
-                LogUtils.d("wy", "click item: " + position);
                 drawerList.remove(position);
                 ticketItemModels.get(position).setSelect(false);
                 drawerAdapter.notifyDataSetChanged();
@@ -168,7 +168,8 @@ public class MainQueryActivity extends AbstractActivity {
                     String toStation = toStationInput.getText().toString();
                     if (StringUtils.isNotBlank(date) && StringUtils.isNotBlank(fromStation) && StringUtils.isNotBlank(toStation)) {
                         ConfigPreference.updateQueryInfo(MainQueryActivity.this, date, fromStation, toStation);
-                        queryTickets("2019-02-01", "BXP", "TNV");
+//                        queryTickets("2019-02-01", "BXP", "TNV");
+                        queryTickets(date, fromStation, toStation);
                     }
                     break;
                 case R.id.quert_start:
@@ -185,7 +186,8 @@ public class MainQueryActivity extends AbstractActivity {
 
     private void queryTickets(final String data, String fromStation, String toStation) {
         RequestManaager.getInstance().sendQueryTickets(
-            this, data, fromStation, toStation, new Callback<QueryTicketsResponse>() {
+            this, data, UserDbManager.getInstance().queryStationFlagByName(fromStation),
+                UserDbManager.getInstance().queryStationFlagByName(toStation), new Callback<QueryTicketsResponse>() {
                 @Override
                 public void onResponse(@NonNull Call<QueryTicketsResponse> call, @NonNull Response<QueryTicketsResponse> response) {
                     QueryTicketsResponse ticketsResponse = response.body();

@@ -42,8 +42,8 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
         QueryTicketItemModel model = ticketList.get(viewHolder.getAdapterPosition());
 
         viewHolder.stationId.setText(model.getTrainCode());
-        viewHolder.fromStation.setText(StringUtils.formatString("始发站：%s[%s]", model.getFromStation(), model.getStartTime()));
-        viewHolder.toStation.setText(StringUtils.formatString("终到站：%s[%s]", model.getToStation(), model.getArrivalTime()));
+        viewHolder.fromStation.setText(StringUtils.formatString("始发站：%s[%s]", model.getFromStationName(), model.getStartTime()));
+        viewHolder.toStation.setText(StringUtils.formatString("终到站：%s[%s]", model.getToStationName(), model.getArrivalTime()));
         if ("IS_TIME_NOT_BUY".equals(model.getResult())) {
             changeViewVisible(viewHolder, View.GONE);
             viewHolder.bussinessSeat.setTextColor(0xFFAA0000);
@@ -62,7 +62,6 @@ public class RecyclerViewAdapter extends RecyclerView.Adapter<RecyclerViewAdapte
             setSeatInfo(viewHolder.hardSeat, R.string.hard_seat, model.getHardSeat2());
             setSeatInfo(viewHolder.hardSeat2, R.string.hard_seat2, model.getHardSeat2());
             setSeatInfo(viewHolder.noSeat, R.string.no_seat, model.getVoidSeat());
-            LogUtils.d("wy", "isSelect: " + model.isSelect());
             if (model.isSelect()) {
                 viewHolder.layout.setBackgroundColor(0x66AA9988);
                 viewHolder.layout.setOnTouchListener(null);

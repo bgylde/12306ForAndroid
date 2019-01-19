@@ -7,6 +7,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 
+import com.bgylde.ticket.MainApplication;
 import com.bgylde.ticket.R;
 import com.bgylde.ticket.request.model.UserInfoResponse;
 import com.bgylde.ticket.service.ServiceManager;
@@ -107,18 +108,22 @@ public class MainActivity extends AbstractActivity {
     }
 
 
-    private View.OnClickListener listener = new View.OnClickListener() {
-        @Override
-        public void onClick(View v) {
-            int id = v.getId();
-            switch (id) {
-                case R.id.login:
-                    serviceUtils.login(username.getText().toString(), userpasswd.getText().toString());
-                    break;
-                case R.id.no_login:
+    private View.OnClickListener listener;
+
+    {
+        listener = new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                int id = v.getId();
+                switch (id) {
+                    case R.id.login:
+                        serviceUtils.login(username.getText().toString(), userpasswd.getText().toString());
+                        break;
+                    case R.id.no_login:
                     startQueryActivity();
-                    break;
+                        break;
+                }
             }
-        }
-    };
+        };
+    }
 }

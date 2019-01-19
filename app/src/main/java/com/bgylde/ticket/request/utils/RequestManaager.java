@@ -11,6 +11,8 @@ import com.bgylde.ticket.request.model.LoginResponse;
 import com.bgylde.ticket.request.model.QueryTicketsResponse;
 import com.bgylde.ticket.request.model.UserCheckResponse;
 import com.bgylde.ticket.request.model.UserInfoResponse;
+import com.bgylde.ticket.utils.LogUtils;
+import com.bgylde.ticket.utils.StringUtils;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -136,6 +138,10 @@ public class RequestManaager {
     }
 
     public void sendQueryTickets(Context context, String trainDate, String fromStation, String toStation, Callback<QueryTicketsResponse> callback) {
+        if (!StringUtils.isNotBlank(trainDate) || !StringUtils.isNotBlank(toStation) || !StringUtils.isNotBlank(fromStation)) {
+            LogUtils.w(TAG, "sendQueryTickets error. trainDate: " + trainDate + " fromStation: " + fromStation + " toStation:" + toStation);
+            return;
+        }
         String uri = "otn/leftTicket/queryZ?" +
                 "leftTicketDTO.train_date=" + trainDate +
                 "&leftTicketDTO.from_station=" + fromStation +

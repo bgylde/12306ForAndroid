@@ -1,5 +1,8 @@
 package com.bgylde.ticket.request.model;
 
+import com.bgylde.ticket.database.UserDbManager;
+import com.bgylde.ticket.utils.StringUtils;
+
 /**
  * Created by wangyan on 2019/1/8
  */
@@ -48,6 +51,10 @@ public class QueryTicketItemModel {
     private String date;
 
     private boolean isSelect = false;
+
+    private String fromStationName;
+
+    private String toStationName;
 
     public QueryTicketItemModel(String str, String date) {
         String[] list = str.split("\\|");
@@ -240,5 +247,32 @@ public class QueryTicketItemModel {
 
     public boolean isSelect() {
         return isSelect;
+    }
+
+    public String getFromStationName() {
+        if (!StringUtils.isNotBlank(fromStationName))
+            fromStationName = UserDbManager.getInstance().queryStationNameByFlag(fromStation);
+        return fromStationName;
+    }
+
+    public String getToStationName() {
+        if (!StringUtils.isNotBlank(toStationName))
+            toStationName = UserDbManager.getInstance().queryStationNameByFlag(toStation);
+
+        return toStationName;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (obj == null || obj.getClass() != QueryTicketItemModel.class) {
+            return false;
+        }
+
+        if (this == obj) {
+            return true;
+        }
+
+        QueryTicketItemModel model = (QueryTicketItemModel)obj;
+        return this.date.equals(model.getDate()) && this.trainCode.equals(model.getTrainCode());
     }
 }

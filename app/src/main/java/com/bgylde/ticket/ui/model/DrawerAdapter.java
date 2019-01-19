@@ -62,8 +62,8 @@ public class DrawerAdapter extends BaseAdapter {
         setTextString(view, R.id.train_date, itemList.get(position).getDate());
         setTextString(view, R.id.start_time, itemList.get(position).getStartTime());
         setTextString(view, R.id.end_time, itemList.get(position).getArrivalTime());
-        setTextString(view, R.id.from_station, itemList.get(position).getFromStation());
-        setTextString(view, R.id.to_station, itemList.get(position).getToStation());
+        setTextString(view, R.id.from_station, itemList.get(position).getFromStationName());
+        setTextString(view, R.id.to_station, itemList.get(position).getToStationName());
         setTextString(view, R.id.cost_time, itemList.get(position).getDistanceTime());
         setTextString(view, R.id.train_code, itemList.get(position).getTrainCode());
 
