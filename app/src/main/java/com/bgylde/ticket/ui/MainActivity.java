@@ -35,13 +35,13 @@ public class MainActivity extends AbstractActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        serviceUtils = ServiceManager.getInstance();
+        serviceUtils.bindService(this);
     }
 
     @Override
     protected void onResume() {
         super.onResume();
-        serviceUtils = new ServiceManager();
-        serviceUtils.bindService(this);
 
         ConfigPreference configPreference = new ConfigPreference(this);
         username.setText(configPreference.getUsername());
@@ -120,7 +120,7 @@ public class MainActivity extends AbstractActivity {
                         serviceUtils.login(username.getText().toString(), userpasswd.getText().toString());
                         break;
                     case R.id.no_login:
-                    startQueryActivity();
+                        startQueryActivity();
                         break;
                 }
             }

@@ -6,6 +6,10 @@ import android.content.Intent;
 import android.os.Build;
 import android.os.IBinder;
 
+import com.bgylde.ticket.request.model.QueryTicketItemModel;
+
+import java.util.List;
+
 /**
  * Created by wangyan on 2019/1/7
  */
@@ -14,6 +18,16 @@ public class ServiceManager {
     private ServiceConnection serviceConnection;
 
     private IPollService pollService;
+
+    public static ServiceManager getInstance() {
+        return ServiceManagerImpl.instnce;
+    }
+
+    private static class ServiceManagerImpl {
+        private static final ServiceManager instnce = new ServiceManager();
+    }
+
+    private ServiceManager() {}
 
     public void bindService(Context context) {
         if (context == null) {
@@ -58,9 +72,11 @@ public class ServiceManager {
         context.getApplicationContext().stopService(intent);
     }
 
-    public void startBuyTickets() {
-        if (pollService != null) {
-            pollService.startBuyTickets();
+    public void startBuyTickets(List<QueryTicketItemModel> orderList) {
+        if (orderList != null && orderList.size() > 0) {
+            if (pollService != null) {
+                pollService.startBuyTickets(orderList);
+            }
         }
     }
 

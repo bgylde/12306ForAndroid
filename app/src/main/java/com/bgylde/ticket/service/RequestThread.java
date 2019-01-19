@@ -7,7 +7,6 @@ import android.os.HandlerThread;
 import android.os.Message;
 import android.text.format.DateUtils;
 
-import com.bgylde.ticket.database.UserDbManager;
 import com.bgylde.ticket.request.model.AuthResponse;
 import com.bgylde.ticket.request.model.IdentifyCheckResponse;
 import com.bgylde.ticket.request.model.LoginResponse;
@@ -44,6 +43,8 @@ public class RequestThread extends HandlerThread {
     // 验证码验证
     public static final byte IDENTIFY_CHECK = 3;
 
+    private static final long MAX_CHECK_INTERVAL = 1000;
+
     private static final String TAG = "RequestThread";
 
     private static final long CHECK_USER_STATE_TIME = 2 * DateUtils.MINUTE_IN_MILLIS;
@@ -54,7 +55,9 @@ public class RequestThread extends HandlerThread {
 
     private long lastCheckTime = 0;
 
-    private volatile boolean isDestory = false;
+    private OrderInfoModel orderModel = null;
+
+    private volatile boolean isBuyingTickets = false;
 
     RequestThread(Context context) {
         super(TAG);
@@ -127,6 +130,14 @@ public class RequestThread extends HandlerThread {
                     identifyCodeCheck((String)msg.obj, ConfigureManager.getInstance().getAccountUser(),
                             ConfigureManager.getInstance().getAccountPwd());
                     break;
+                case START_BUY_TICKETS:
+                    LogUtils.d(TAG, "start but tickets.");
+                    if (msg.obj instanceof List) {
+                        isBuyingTickets = true;
+                        List<QueryTicketItemModel> orderList = (List<QueryTicketItemModel>)msg.obj;
+                        handleOrderList(orderList);
+                    }
+                    break;
                 default:
                     return false;
             }
@@ -155,9 +166,11 @@ public class RequestThread extends HandlerThread {
 
                 ConfigPreference.updateUserInfo(context, userName, passwd);
                 LogUtils.i(TAG, "Welcome user[" + userInfoResponse.getUsername() + "] login.");
-                EventBus.getDefault().post(new EventBusCarrier(LOGING_SUCCESSFUL_CODE, userInfoResponse));
-
-                //queryTicket();
+                if (isBuyingTickets) {
+                    queryTickets();
+                } else {
+                    EventBus.getDefault().post(new EventBusCarrier(LOGING_SUCCESSFUL_CODE, userInfoResponse));
+                }
             }
         } else {
             Bitmap bitmap = RequestManaager.getInstance().sendIdentifyCodeRequest(context);
@@ -165,46 +178,80 @@ public class RequestThread extends HandlerThread {
                 return;
             }
 
-            // EventBus.getDefault().post(new EventBusCarrier(EventBusCarrier.IDENTIFY_CODE, bitmap));
             DialogUtils.showDialog(context, bitmap, handler);
         }
     }
 
-    public Handler getHandler() {
-        return handler;
+    private void handleOrderList(List<QueryTicketItemModel> orderList) {
+        if (orderList == null || orderList.size() <= 0) {
+            return;
+        }
+
+        orderModel = new OrderInfoModel();
+        for (QueryTicketItemModel model : orderList) {
+            orderModel.setFromStationFlag(model.getFromStation())
+                        .setToStationFlag(model.getToStation())
+                        .addOrderDate(model.getDate())
+                        .addTrainCode(model.getTrainCode());
+        }
+
+        queryTickets();
     }
 
-//    private void queryTicket() {
-//        while(!isDestory) {
-//            if (System.currentTimeMillis() - lastCheckTime > CHECK_USER_STATE_TIME) {
-//                UserCheckResponse response = RequestManaager.getInstance().sendUserCheckRequest(context);
-//                if (response != null) {
-//                    if (response.getData() != null && response.getData().getFlag()) {
-//                        lastCheckTime = System.currentTimeMillis();
-//                    } else {
-//                        LogUtils.w(TAG, "ReLogin!");
-//                        initQuery();
-//                    }
-//                }
-//            }
-//
-//            QueryTicketsResponse response = RequestManaager.getInstance().sendQueryTicketsAnsyc(context, "2019-02-01", "BXP", "TNV");
-//            if (response != null) {
-//                List<String> list = response.getData().getResult();
-//                for (String itemStr : list) {
-//                    QueryTicketItemModel model = new QueryTicketItemModel(itemStr, "2019-02-01");
-//                    if (model.getResult().equals("Y") && model.getStatus().equals("预定")) {
-//
-//                    }
-//                }
-//            }
-//
-//            try {
-//                Thread.sleep(5000);
-//            } catch (InterruptedException e) {
-//                e.printStackTrace();
-//            }
-//
-//        }
-//    }
+    private void queryTickets() {
+        if (orderModel == null) {
+            return;
+        }
+
+        int count = 1;
+        while(true) {
+            if (System.currentTimeMillis() - lastCheckTime > CHECK_USER_STATE_TIME) {
+                UserCheckResponse response = RequestManaager.getInstance().sendUserCheckRequest(context);
+                if (response != null) {
+                    if (response.getData() != null && response.getData().getFlag()) {
+                        lastCheckTime = System.currentTimeMillis();
+                    } else {
+                        LogUtils.w(TAG, "ReLogin!");
+                        initQuery();
+                        break;
+                    }
+                }
+            }
+
+            List<String> dateList = orderModel.getDateList();
+            if (dateList == null || dateList.size() <= 0) {
+                return;
+            }
+
+            DialogUtils.showNotification(context, "第" + count++ + "次查询", count);
+            for (String date : dateList) {
+                QueryTicketsResponse response = RequestManaager.getInstance().sendQueryTicketsAnsyc(
+                        context, date, orderModel.getFromStationFlag(), orderModel.getToStationFlag());
+                if (response != null) {
+                    List<String> list = response.getData().getResult();
+                    for (String itemStr : list) {
+                        QueryTicketItemModel model = new QueryTicketItemModel(itemStr, date);
+                        if (orderModel.containsStationCode(model.getTrainCode())
+                                && model.getResult().equals("Y")
+                                && model.getStatus().equals("预订")) {
+                            LogUtils.d(TAG, "OK, successful.");
+
+                            //todo 下订单
+                            break;
+                        }
+                    }
+                }
+
+                try {
+                    Thread.sleep(MAX_CHECK_INTERVAL);
+                } catch (InterruptedException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+    }
+
+    Handler getHandler() {
+        return handler;
+    }
 }

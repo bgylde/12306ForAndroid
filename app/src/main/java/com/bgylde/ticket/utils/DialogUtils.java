@@ -1,6 +1,9 @@
 package com.bgylde.ticket.utils;
 
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
@@ -11,16 +14,16 @@ import android.os.Handler;
 import android.os.Looper;
 import android.os.Message;
 import android.provider.Settings;
+import android.support.v4.app.NotificationCompat;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.ImageView;
 import android.widget.Toast;
 
 import com.bgylde.ticket.R;
-import com.bgylde.ticket.request.utils.RequestManaager;
 import com.bgylde.ticket.service.RequestThread;
 import com.bgylde.ticket.ui.IdentifyView;
+import com.bgylde.ticket.ui.MainQueryActivity;
 
 /**
  * Created by wangyan on 2019/1/7
@@ -124,5 +127,22 @@ public class DialogUtils {
                 }
             });
         }
+    }
+
+    public static void showNotification(Context context, String state, int progress) {
+        Intent  intent = new Intent(context, MainQueryActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, PendingIntent.FLAG_UPDATE_CURRENT, intent,0);
+        NotificationManager manger = (NotificationManager)context.getSystemService(Context.NOTIFICATION_SERVICE);
+        Notification notification = new NotificationCompat.Builder(context)
+                .setContentTitle(context.getResources().getString(R.string.app_name))
+                .setContentText(state)
+                .setWhen(System.currentTimeMillis())
+                .setSmallIcon(R.mipmap.ic_launcher)
+                .setOngoing(true)
+                .setContentIntent(pendingIntent)
+                .setProgress(100, progress, true)
+                .build();
+
+        manger.notify(1, notification);
     }
 }

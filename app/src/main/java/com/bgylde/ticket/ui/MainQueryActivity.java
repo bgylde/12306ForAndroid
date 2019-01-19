@@ -1,12 +1,10 @@
 package com.bgylde.ticket.ui;
 
-import android.animation.Animator;
-import android.animation.AnimatorSet;
 import android.content.Intent;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
-import android.support.v4.app.Fragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.widget.DefaultItemAnimator;
 import android.support.v7.widget.DividerItemDecoration;
@@ -20,12 +18,10 @@ import android.view.animation.AnimationSet;
 import android.view.animation.RotateAnimation;
 import android.view.animation.ScaleAnimation;
 import android.view.animation.TranslateAnimation;
-import android.widget.AdapterView;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.ListView;
 import android.widget.TextView;
 
@@ -34,13 +30,21 @@ import com.bgylde.ticket.R;
 import com.bgylde.ticket.database.UserDbManager;
 import com.bgylde.ticket.request.model.QueryTicketItemModel;
 import com.bgylde.ticket.request.model.QueryTicketsResponse;
+import com.bgylde.ticket.request.model.UserInfoResponse;
 import com.bgylde.ticket.request.utils.RequestManaager;
+import com.bgylde.ticket.service.PollService;
+import com.bgylde.ticket.service.ServiceManager;
 import com.bgylde.ticket.ui.model.DrawerAdapter;
+import com.bgylde.ticket.ui.model.EventBusCarrier;
 import com.bgylde.ticket.ui.model.RecyclerViewAdapter;
 import com.bgylde.ticket.utils.ConfigPreference;
 import com.bgylde.ticket.utils.DialogUtils;
 import com.bgylde.ticket.utils.LogUtils;
 import com.bgylde.ticket.utils.StringUtils;
+
+import org.greenrobot.eventbus.EventBus;
+import org.greenrobot.eventbus.Subscribe;
+import org.greenrobot.eventbus.ThreadMode;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -55,6 +59,9 @@ import retrofit2.Response;
 public class MainQueryActivity extends AbstractActivity {
 
     private static final String TAG = "MainQueryActivity";
+
+    private ServiceManager serviceManager = null;
+
     private String username;
 
     private TextView userText;
@@ -83,9 +90,10 @@ public class MainQueryActivity extends AbstractActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        serviceManager = ServiceManager.getInstance();
+        serviceManager.bindService(this);
         Intent intent = getIntent();
         username = intent.getStringExtra("username");
-
         viewGroup = createAnimationLayout();
     }
 
@@ -104,6 +112,19 @@ public class MainQueryActivity extends AbstractActivity {
         orderDateInput.setText(configPreference.getQueryDate());
 
         query.requestFocus();
+        EventBus.getDefault().register(this);
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        EventBus.getDefault().unregister(this);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        serviceManager.unBindService(this);
     }
 
     @Override
@@ -157,6 +178,21 @@ public class MainQueryActivity extends AbstractActivity {
         ticketsMarket.setOnClickListener(listener);
     }
 
+    @Subscribe(threadMode = ThreadMode.MAIN)
+    public void onEvent(EventBusCarrier event) {
+        byte type = event.getEventType();
+        Object object = event.getObject();
+        switch (type) {
+            case EventBusCarrier.LOGING_SUCCESSFUL_CODE:
+                if (object != null && object instanceof UserInfoResponse) {
+                    UserInfoResponse userInfoResponse = (UserInfoResponse) object;
+                    username  = userInfoResponse.getUsername();
+                    userText.setText(username);
+                }
+                break;
+        }
+    }
+
     private View.OnClickListener listener = new View.OnClickListener() {
         @Override
         public void onClick(View v) {
@@ -173,6 +209,17 @@ public class MainQueryActivity extends AbstractActivity {
                     }
                     break;
                 case R.id.quert_start:
+                    if (drawerList.size() > 0) {
+                        Intent intent = new Intent();
+                        intent.setClass(getApplicationContext(), PollService.class);
+                        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+                            startForegroundService(intent);
+                        } else {
+                            startService(intent);
+                        }
+
+                        serviceManager.startBuyTickets(drawerList);
+                    }
                     break;
                 case R.id.market:
                     if (drawerList.size() > 0) {
