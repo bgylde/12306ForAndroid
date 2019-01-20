@@ -204,6 +204,7 @@ public class RequestThread extends HandlerThread {
         }
 
         int count = 1;
+        queryTicket:
         while(true) {
             if (System.currentTimeMillis() - lastCheckTime > CHECK_USER_STATE_TIME) {
                 UserCheckResponse response = RequestManaager.getInstance().sendUserCheckRequest(context);
@@ -237,7 +238,7 @@ public class RequestThread extends HandlerThread {
                             LogUtils.d(TAG, "OK, successful.");
 
                             //todo 下订单
-                            break;
+                            break queryTicket;
                         }
                     }
                 }
